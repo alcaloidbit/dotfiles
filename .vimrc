@@ -14,6 +14,9 @@ let g:lightline = {
             \ 'subseparator':{'left':'|', 'right':'|'}
             \}
 " }}}
+" CtrlP {{{
+:nmap <Leader>b :CtrlPBuffer<CR>
+" }}}
 " VimWiki {{{
     let g:vimwiki_hl_headers = 1
     let wiki_1 = {}
@@ -25,7 +28,12 @@ let g:lightline = {
     let wiki_2.path = '~/Documents/vimwiki/Culture/'
     let wiki_2.index = 'Culture'
 
-    let g:vimwiki_list = [wiki_1, wiki_2]
+    let wiki_3 = {}
+    let wiki_3.path = '~/Documents/vimwiki/Todo/'
+    let wiki_3.index = 'index'
+
+    let g:vimwiki_list = [wiki_1, wiki_2, wiki_3]
+    
 " }}}
 " }}}
 " Vundle  {{{
@@ -241,6 +249,7 @@ au BufWritePost *.php silent! !eval '[ -f ".git/hooks/ctags" ] && .git/hooks/cta
 " }}}
 " Vim Sessions {{{
 let g:sessions_dir = '~/.vim/vim-sessions'
+:nmap <F2> :wa<Bar>exe "mksession! " . v:this_session<CR>:so ~/.vim/vim-sessions/
 exec 'nnoremap <Leader>ss :mks! ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
 exec 'nnoremap <Leader>sr :so ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
 " }}}
