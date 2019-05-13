@@ -49,6 +49,7 @@ Plugin 'joshdick/onedark.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'majutsushi/tagbar'
+Plugin 'ryanoasis/vim-devicons'
 Plugin 'mattn/calendar-vim'
 Plugin 'mattn/emmet-vim'
 Plugin 'mileszs/ack.vim'
@@ -59,6 +60,10 @@ Plugin 'sheerun/vim-polyglot'
 Plugin 'townk/vim-autoclose'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
+Plugin 'SirVer/ultiSnips'
+Plugin 'tobyS/pdv'
+Plugin 'tobyS/vmustache'
+Plugin 'honza/vim-snippets'
 Plugin 'vimwiki/vimwiki'
 Plugin 'vundleVim/Vundle.vim'
 
@@ -211,6 +216,13 @@ map <silent> <Leader>n <Esc>:noh<CR>
 " }}}
 " Toggle Folds {{{
 nnoremap <space> za 
+" }}}
+" Open/Close folds by one level {{{
+nnoremap <F4> zm 
+nnoremap <F5> zr
+" }}}
+" Open 1 fold level {{{
+" nnoremap <F3> zr
 " }}}
 " Indent file {{{
 map <F7> gg=G<C-o><C-o>
