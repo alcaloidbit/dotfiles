@@ -85,7 +85,7 @@ plugins=(
   extract
   git
   git-prompt
-  hacker-quotes
+#  hacker-quotes
   z
   zsh-autosuggestions
   zsh-syntax-highlighting
@@ -93,8 +93,6 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $HOME/Documents/todo.txt-cli/todo_completion
-source $ZSH/custom/plugins/ssh-connect/ssh-connect.sh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"

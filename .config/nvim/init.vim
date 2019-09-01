@@ -1,19 +1,13 @@
+" Settings {{{
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
 source ~/.vimrc
-
-" Settings {{{
-" CtrlP {{{
-:nmap <Leader>b :CtrlPBuffer<CR>
+" From the Book `Pratical Vim` {{{
+" %% expands to the path of the active buffer ( eq : %:h<TAB )
+cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 " }}}
-" PHPDoc
-let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
-nnoremap <buffer> <leader>dc :call pdv#DocumentWithSnip()<CR>
+" Remap \ to reverse search {{{
+nnoremap \ ,
 " }}}
-
-
-" UltiSnips {{{
-let g:UltiSnipsListSnippets = "<F3>"
-let g:UltiSnipsSnippetDirectories = ["~/.vim/UltiSnips/", "UltiSnips/"]
-
 " }}}
+" vim: foldmethod=marker:foldlevel=0:
