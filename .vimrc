@@ -3,34 +3,90 @@
 let mapleader=","   " leader is comma
 " }}}
 " Plugs mappings {{{
-" PHPDoC {{{
-let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
-nnoremap <buffer> <leader>dc :call pdv#DocumentWithSnip()<CR>
-" }}}
-" Ack mappings (from 'Vim pour les humains - http://vimebook.com {{{
-let g:ackprg="ack -H --nocolor --nogroup --column"
-" Place un marqueur et cherche
-nmap <leader>j mA:Ack<space>
-" Place un marqueur et cherche le mot sous le curseur 
-nmap <leader>ja mA:Ack "<C-r>=expand("<cword>")<cr>"
-" }}}
 " Tagbar {{{
-nmap <F8> :TagbarToggle<CR>
+nnoremap <F8> :TagbarToggle<CR>
 " }}}
 " CtrlP {{{
-:nmap lb :CtrlPBuffer<CR>
+" :nnoremap lb :CtrlPBuffer<CR>
+nnoremap lb :Buffers<CR>
 " }}}
 " CtrlPTag {{{
 nnoremap <leader>. :CtrlPTag<CR>
 " }}}
+" Instant-markdown {{{
+nnoremap <leader>md :InstantMarkdownPreview<CR>
+" }}}
+" Ncm2 {{{
+" suppress the annoying 'match x of y', 'The only match' and 'Pattern not
+" found' messages
+set shortmess+=c
+" CTRL-C doesn't trigger the InsertLeave autocmd . map to <ESC> instead.
+inoremap <c-c> <ESC>
+
+" When the <Enter> key is pressed while the popup menu is visible, it only
+" hides the menu. Use this mapping to close the menu and also start a new
+" line.
+inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+
+" Use <TAB> to select the popup menu:
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" wrap existing omnifunc
+" Note that omnifunc does not run in background and may probably block the
+" editor. If you don't want to be blocked by omnifunc too often, you could
+" add 180ms delay before the omni wrapper:
+"  :on_completg': ['ncm2#on_complete#delay', 180,
+"               \ 'ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
+au User Ncm2Plugin call ncm2#register_source({
+        \ 'name' : 'css',
+        \ 'priority': 9,
+        \ 'subscope_enable': 1,
+        \ 'scope': ['css','scss'],
+        \ 'mark': 'css',
+        \ 'word_pattern': '[\w\-]+',
+        \ 'complete_pattern': ':\s*',
+        \ 'on_complete': ['ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
+        \ })
+" }}}
 " NERDTree {{{
-nnoremap <leader>e :OpenBookmark 
+nnoremap <leader>e :OpenBookmark<space>
+nnoremap <leader>nf :NERDTreeFind<CR> 
+
 nnoremap <silent> <F9> :NERDTreeToggle<CR>
 " close NERDTree if last buffer
 " autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 " }}}
+" rip-grep {{{
+nnoremap <leader>rg :Rg<space>
+nnoremap <leader>RG :exec "Rg ".expand("<cword>")<cr>
+
+autocmd VimEnter * command! -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
 " }}}
+" Ferret {{{
+" Instead of <leader>a, use <leader>fa
+nmap <leader>fa <Plug>(FerretAck)
+" Instead of <leader>l, use <leader>fl
+nmap <leader>fl <Plug>(FerretAck)
+" Instead of <leader>s, use <leader>fs
+nmap <leader>fs <Plug>(FerretAck)
+" Instead of <leader>r, use <leader>fu
+nmap <leader>fu <Plug>(FerretAck)
+" }}}
+" }}} 
 " Plugs Settings {{{
+" NERDTree {{{
+let NERDTreeIgnore=['node_modules', 
+                    \ 'package-lock.json',
+                    \ 'package.json',
+                    \ 'postcss.config.js',
+                    \ 'webpack.config.js' ]
+" }}}
 " Lightline {{{
     let g:lightline = {
            \ 'colorscheme': 'gruvbox',
@@ -45,9 +101,6 @@ nnoremap <silent> <F9> :NERDTreeToggle<CR>
             \ 'subseparator':{'left':'|', 'right':'|'}
             \}
 " }}}
-" PHPDoC {{{
-let g:pdv_template_dir = $HOME ."/.vim/bundle/pdv/templates_snip"
-" }}}
 " Enable Matchit plugin {{{
 runtime macros/matchit.vim
 " }}}
@@ -56,6 +109,14 @@ let g:UltiSnipsListSnippets = "<F3>"
 let g:UltiSnipsSnippetDirectories = ["~/.vim/UltiSnips/", "UltiSnips/"]
 " }}}
 " VimWiki {{{
+" vimwiki markdown support {{{
+    let g:vimwiki_ext2syntax = {  '.md': 'markdown', 
+                                \ '.markdowon': 'markdown', 
+                                \ '.mkd': 'markdown', 
+                                \ '.mdown' :'markdown'}
+
+   let g:instant_markdown_autostart = 0
+" }}}
     let g:vimwiki_hl_headers = 1
     let wiki_1 = {}
     let wiki_1.path = '~/Documents/vimwiki/Main/'
@@ -70,56 +131,124 @@ let g:UltiSnipsSnippetDirectories = ["~/.vim/UltiSnips/", "UltiSnips/"]
     let wiki_3.path = '~/Documents/vimwiki/Todo/'
     let wiki_3.index = 'index'
 
-    let g:vimwiki_list = [wiki_1, wiki_2, wiki_3]
+    let wiki_4 = {}
+    let wiki_4.path = '~/Documents/wikimd/'
+    let wiki_4.syntax = 'markdown'
+    let wiki_4.ext = '.md'
+    let wiki_4.index = 'index'
+
+    let wiki_5 = {}
+    let wiki_5.path = '~/.vim/mappings/'
+    let wiki_5.syntax = 'markdown'
+    let wiki_5.ext = '.md'
+    let wiki_5.index = 'index'
+
+    let g:vimwiki_list = [wiki_1, wiki_2, wiki_3, wiki_4, wiki_5]
 
 " }}}
-" PHPComplete + Gutentags {{{
-set omnifunc=syntaxcomplete#Complete
-autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
-" setup vim tag file
-set tags=tags;/
+" Gutentags {{{
+let g:gutentags_trace=0
+" let g:gutentags_ctags_exclude=["timpope/*"]
 augroup MyGutentagsStatusLineRefresher
     autocmd!
     autocmd User GutentagsUpdating call lightline#update()
     autocmd User GutentagsUpdated call lightline#update()
 augroup END
 " }}}
-" Vundle  {{{
+" Fzf {{{
+set rtp+=~/.fzf
+" }}}
+" Vundle Manager  {{{
 " git clone https://github.com/VundleVim/Vundle.vim.git  ~/.vim/bundle/Vundle.vim
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " let Vundle manage Vundle, required
+Plugin 'SirVer/ultiSnips'
+Plugin 'StanAngeloff/php.vim'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin 'bfredl/nvim-miniyank'
+Plugin 'ervandew/supertab'
+Plugin 'godlygeek/tabular'
+Plugin 'haya14busa/is.vim'
+Plugin 'honza/vim-snippets'
 Plugin 'itchyny/lightline.vim'
 Plugin 'joshdick/onedark.vim'
+Plugin 'junegunn/fzf.vim'
 Plugin 'kien/ctrlp.vim'
+Plugin 'kshenoy/vim-signature'
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'majutsushi/tagbar'
-Plugin 'ryanoasis/vim-devicons'
-Plugin 'mattn/calendar-vim'
+" Modify * to also work with visual selection
+Plugin 'nelstrom/vim-visual-star-search'
 Plugin 'mattn/emmet-vim'
 Plugin 'mileszs/ack.vim'
+Plugin 'moll/vim-bbye'
 Plugin 'morhetz/gruvbox'
+Plugin 'ncm2/ncm2'
+Plugin 'ncm2/ncm2-bufword'
+Plugin 'ncm2/ncm2-path'
+Plugin 'ncm2/ncm2-tern'
+Plugin 'neomake/neomake'
+Plugin 'phpactor/ncm2-phpactor'
+Plugin 'phpactor/phpactor', {'do': 'composer install', 'for': 'php'}
+Plugin 'plasticboy/vim-markdown'
+Plugin 'roxma/nvim-yarp'
+Plugin 'ryanoasis/vim-devicons'
 Plugin 'scrooloose/nerdtree'
-Plugin 'shawncplus/phpcomplete.vim'
 Plugin 'sheerun/vim-polyglot'
+Plugin 'stephpy/vim-php-cs-fixer'
+Plugin 'suan/vim-instant-markdown', {'rtp': 'after'}
 Plugin 'townk/vim-autoclose'
+Plugin 'tpope/vim-abolish'
+Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
-Plugin 'SirVer/ultiSnips'
-Plugin 'tobyS/pdv'
-" Plugin 'thaerkh/vim-workspace'
-Plugin 'tobyS/vmustache'
-Plugin 'honza/vim-snippets'
 Plugin 'vimwiki/vimwiki'
 Plugin 'vundleVim/Vundle.vim'
-Plugin 'valloric/youcompleteme'
-
+Plugin 'wincent/ferret'
 call vundle#end()
 filetype plugin indent on
 " }}}
 " Ctrlp {{{
 set runtimepath^=~/.vim/bundle/ctrlp.vim
+" }}}
+" Bbye {{{
+set runtimepath^=~/.vim/bundle/bbye
+" }}}
+" Ncm2 {{{
+" enable ncm2 for all buffers 
+autocmd BufEnter * call ncm2#enable_for_buffer()
+" Important\: :help Ncm2PopupOpen for more Information
+set completeopt=noinsert,menuone,noselect
+" }}}
+" PHPactor {{{
+" Include use statement
+nnoremap <Leader>u :call phpactor#UseAdd()<CR>
+
+" Invoke the context menu
+nnoremap <Leader>mm :call phpactor#ContextMenu()<CR>
+
+" Goto definition of class or class member under the cursor
+nnoremap <Leader>o :call phpactor#GotoDefinition()<CR>
+
+" Show brief information about the symbol under the cursor 
+nnoremap <leader>K :call phpactor#Hover()<CR>
+
+" Transform the classes in the current file
+nnoremap <Leader>tt :call phpactor#Transform()<CR>
+
+" Generate a new class (replacing the current file)
+nnoremap <Leader>cc :call phpactor#ClassNew()<CR>
+
+" Extract expression (normal mode)
+nnoremap <silent><leader>ee :call phpactor#ExtractExpression(v:false)<CR>
+
+" Extract expression from selection
+vnoremap <silent><leader>ee :<C-u>call phpactor#ExtractExpression(v:true)<CR>
+
+" Extract method from selection
+vnoremap <silent><Leader>em :<C-U>call phpactor#ExtractMethod()<CR>
 " }}}
 " }}}
 " Colors {{{
@@ -190,34 +319,70 @@ set wildmenu    " Hitting TAB in command mode will show possible completions abo
 " set wildmode=list:longest   " Complete only until point of ambiguity
 set winminheight=0  "Allow splits to be reduced to a single line
 " }}}
-" }}}
+" }}} 
 " Configuration {{{
 augroup general_config
 autocmd!
+" map Ctrl-f to fzf :Files
+nnoremap <C-f> :Files<Cr>
+" Pwd {{{
+nnoremap <leader>pwd :pwd<Cr>
+" }}}
+" Press * to search for the term under the cursor or a visual selection an 
+" then press a key below to replace all instances of it in the current file.
+nnoremap <leader>r :%s///g<Left><Left>
+" Confirm each substition.
+nnoremap <leader>rc :%s///gc<Left><Left><Left>
+" Report the number of matches, do not actually substitute. 
+nnoremap <leader>rn :%s///gcn<Left><Left><Left><Left>
+
+" The same as above but instead of acting on the whole file it will be
+" restricted to the previously visually selected range. You can do that 
+" by pressing *, visually selecting the range you want it to apply to and then
+" press a key below to replace all instances of it in the current selection.
+xnoremap <Leader>r :s///g<Left><Left>
+xnoremap <Leader>rc :s///g<Left><Left><Left>
+
+" Save/Quit vim moppings {{{
+noremap <leader>w :w<CR>
+noremap <leader>qq :qa!<CR>
+noremap <leader>wq :wqa<CR>
+" }}}
+" Find files by filename {{{
+noremap <leader>fd :find<space>
+" }}}
 " Edit/Source vimrc {{{
-:nmap <Leader>v :e $MYVIMRC
-:nmap <Leader>s :source $MYVIMRC
+nnoremap <Leader>vi :e ~/.vimrc<Cr>
+nnoremap <Leader>so :source ~/.vimrc<CR>
 " }}}
 " <esc> is ;; {{{
 inoremap ;; <esc>
 " }}}
-" Speed Up Scrolling {{{
-nmap J 5j
-nmap K 5k
-xmap J 5j
-xmap K 5k
+" <esc> exit terminal-mode {{{
+tnoremap <Esc> <C-\><C-n>
 " }}}
-" Faster split resizing (+,-) {{{
+" Speed Up Scrolling {{{
+nnoremap J 5j
+nnoremap K 5k
+xnoremap J 5j
+xnoremap K 5k
+" }}}
+" Splitting {{{
+noremap <leader>vs :vsplit<CR>
+noremap <leader>sp :split<CR>
+noremap <leader>cl :close<CR>
+" }}}
+" Faster Split resizing (+,-) {{{
 if bufwinnr(1)
     map + <C-W>+
     map - <C-W>-
 endif
 " }}}
 " Better split switching (Ctrl-j, Ctrl-k, Ctrl-h, Ctrl-l) {{{
-map gj <C-W>j
-map gk <C-W>k
-map gh <C-W>h
-map gl <C-W>l
+noremap gj <C-W>j
+noremap gk <C-W>k
+noremap gh <C-W>h
+noremap gl <C-W>l
 " }}}
 " Tab Navigation {{{
 "nnoremap th :tabfirst<CR>
@@ -227,15 +392,14 @@ map gl <C-W>l
 "nnoremap tt :tabedit<Space>
 "nnoremap tn :tabnext<Space>
 "nnoremap tm :tabm<Space>
-"nnoremap td :tabclose<CR>
-"  Alternatively use
-"  nnoremap th :tabnext<CR>
-"  nnoremap tl :tabprev<CR>
-"  nnoremap tn :tabnew<CR>
-    " }}}
+nnoremap tc :tabclose<CR>
+nnoremap te :tabedit<CR>
+nnoremap tn :tabnext<CR>
+noremap tp :tabprev<CR>
+" }}}
 " Tabs Switching {{{
-nmap <C-l> gt
-nmap <C-h> gT
+nnoremap <C-l> gt
+nnoremap <C-h> gT
 " }}}
 " Sudo write (,W) {{{
 noremap <leader>W :w !sudo tee %<CR>
@@ -244,7 +408,7 @@ noremap <leader>W :w !sudo tee %<CR>
 command! W write
 " }}}
 " Clear last search (,n) {{{
-map <silent> <Leader>n <Esc>:noh<CR>
+noremap <silent> <nowait> <Leader>n <Esc>:noh<CR>
 " }}}
 " Toggle Folds {{{
 nnoremap <space> za
@@ -257,7 +421,7 @@ nnoremap <F5> zr
 " nnoremap <F3> zr
 " }}}
 " Indent file {{{
-map <F7> gg=G<C-o><C-o>
+noremap <F7> gg=G<C-o><C-o>
 " }}}
 " Netrw {{{
 let g:netrw_liststyle = 3
@@ -289,21 +453,28 @@ set relativenumber
 :autocmd BufLeave,FocusLost,InsertEnter * set norelativenumber
 :augroup END
 " }}}
-" Generate Tags on saving a php file {{{
-au BufWritePost *.php silent! !eval '[ -f ".git/hooks/ctags" ] && .git/hooks/ctags' &
-" }}}
 " Vim Sessions {{{
 let g:sessions_dir = '~/.vim/vim-sessions'
 exec 'nnoremap <Leader>ss :mks! ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
 exec 'nnoremap <Leader>sr :so ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
+" {{{ Save all open files, write this:session
+nnoremap <F2> :wa<Bar>exe "mksession! " . v:this_session<CR>:so ~/.vim/vim-sessions/
+" }}}
 " }}}
 "}}}  
 " Buffers {{{
+" Create a new empty buffer
+nnoremap <leader>ne :enew<cr>
+nnoremap <leader>vne :vnew<cr>
 augroup buffer_control
     autocmd!
 " Buffer navigation (,,) (gb) (gB) {{{
-map <Leader>, <C-^>
-:nnoremap <C-n> :bnext<CR>
+noremap <Leader>, <C-^>
+nnoremap <Tab> :bnext<CR>
+nnoremap <S-Tab> :bprevious<CR>
+" Close Buffers Properly {{{
+nnoremap <Leader>q :Bdelete<CR>
+" }}}
 " }}}
 augroup END
 " List Buffers with nb, accept a new buffer arg [1] {{{
