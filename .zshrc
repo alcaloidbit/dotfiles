@@ -26,7 +26,8 @@ ZSH_THEME="spaceship"
 # SPACESHIP_PROMPT CONFIGURATION
 # SPACESHIP_PROMPT_ORDER=()
 # SPACESHIP_USER_SHOW=(always)
-# SPACESHIP_TIME_SHOW=(true)
+SPACESHIP_TIME_SHOW=(true)
+SPACESHIP_TIME_FORMAT=%T
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
@@ -84,6 +85,7 @@ plugins=(
   common-aliases
   extract
   git
+  gitignore
   git-prompt
 #  hacker-quotes
   z
@@ -93,6 +95,8 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -113,6 +117,12 @@ export LANG=fr_FR.UTF-8
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
 
+# Enable a better reverse search experience.
+#  Requires: https://github.com/junegunn/fzf (to use fzf in general)
+#  Requires: https://github.com/BurntSushi/ripgrep (for using rg below)
+export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git'"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -128,7 +138,7 @@ setopt pushdignoredups
 export PATH="$PATH:$HOME/.rvm/bin"
 export BROWSER=/usr/bin/google-chrome
 
-eval `dircolors ~/.dir_colors/dircolors`
+# eval `dircolors ~/.dir_colors/dircolors`
 
 autoload -Uz promptinit; 
 promptinit
@@ -137,3 +147,5 @@ prompt spaceship
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" ]]]
+eval $(dircolors -b $HOME/.dircolors)
+

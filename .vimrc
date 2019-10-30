@@ -6,10 +6,6 @@ let mapleader=","   " leader is comma
 " Tagbar {{{
 nnoremap <F8> :TagbarToggle<CR>
 " }}}
-" CtrlP {{{
-" :nnoremap lb :CtrlPBuffer<CR>
-nnoremap lb :Buffers<CR>
-" }}}
 " CtrlPTag {{{
 nnoremap <leader>. :CtrlPTag<CR>
 " }}}
@@ -57,26 +53,33 @@ nnoremap <silent> <F9> :NERDTreeToggle<CR>
 " close NERDTree if last buffer
 " autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 " }}}
-" rip-grep {{{
+" FZF {{{
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+
+" Launch fzf with CTRL+P.
+nnoremap <silent> <C-p> :FZF -m<CR>
+
+" Map a few common things to do with FZF.
+nnoremap <silent> lb :Buffers<CR>
+nnoremap <silent> <Leader>l :Lines<CR>
+
+" Allow passing optional flags into the Rg command.
+autocmd VimEnter * command! -nargs=* Rg
+   \ call fzf#vim#grep(
+   \   'rg --column --line-number --no-heading --ignore-case --color "always" '.<q-args>, 1,
+   \   <bang>0 ? fzf#vim#with_preview('up:60%')
+   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+   \   <bang>0)
+" }}}
+" Rip-grep {{{
 nnoremap <leader>rg :Rg<space>
 nnoremap <leader>RG :exec "Rg ".expand("<cword>")<cr>
-
-autocmd VimEnter * command! -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
 " }}}
 " Ferret {{{
-" Instead of <leader>a, use <leader>fa
 nmap <leader>fa <Plug>(FerretAck)
-" Instead of <leader>l, use <leader>fl
-nmap <leader>fl <Plug>(FerretAck)
-" Instead of <leader>s, use <leader>fs
-nmap <leader>fs <Plug>(FerretAck)
-" Instead of <leader>r, use <leader>fu
-nmap <leader>fu <Plug>(FerretAck)
+nmap <leader>fl <Plug>(FerretLack)
+nmap <leader>fw <Plug>(FerretAckWord)
+nmap <leader>fr <Plug>(FerretAcks)
 " }}}
 " }}} 
 " Plugs Settings {{{
@@ -155,7 +158,7 @@ augroup MyGutentagsStatusLineRefresher
     autocmd User GutentagsUpdated call lightline#update()
 augroup END
 " }}}
-" Fzf {{{
+" FZF {{{
 set rtp+=~/.fzf
 " }}}
 " Vundle Manager  {{{
@@ -175,7 +178,7 @@ Plugin 'honza/vim-snippets'
 Plugin 'itchyny/lightline.vim'
 Plugin 'joshdick/onedark.vim'
 Plugin 'junegunn/fzf.vim'
-Plugin 'kien/ctrlp.vim'
+" Plugin 'kien/ctrlp.vim'
 Plugin 'kshenoy/vim-signature'
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'majutsushi/tagbar'
@@ -323,11 +326,10 @@ set winminheight=0  "Allow splits to be reduced to a single line
 " Configuration {{{
 augroup general_config
 autocmd!
-" map Ctrl-f to fzf :Files
-nnoremap <C-f> :Files<Cr>
 " Pwd {{{
 nnoremap <leader>pwd :pwd<Cr>
 " }}}
+" Mappings from Nick Janetakis Video {{{
 " Press * to search for the term under the cursor or a visual selection an 
 " then press a key below to replace all instances of it in the current file.
 nnoremap <leader>r :%s///g<Left><Left>
@@ -343,6 +345,12 @@ nnoremap <leader>rn :%s///gcn<Left><Left><Left><Left>
 xnoremap <Leader>r :s///g<Left><Left>
 xnoremap <Leader>rc :s///g<Left><Left><Left>
 
+" Type a replacement term and press . to repeat the replacement again.
+" Useful for replacing a few instances of the term (comparable to multiple
+" cursors )
+nnoremap <silent> s* :let @/='\<'.expand('<cword>').'\>'<CR>cgn
+xnoremap <silent> s* "sy:let @/=@s<CR>cgn
+" }}}
 " Save/Quit vim moppings {{{
 noremap <leader>w :w<CR>
 noremap <leader>qq :qa!<CR>
@@ -356,10 +364,10 @@ nnoremap <Leader>vi :e ~/.vimrc<Cr>
 nnoremap <Leader>so :source ~/.vimrc<CR>
 " }}}
 " <esc> is ;; {{{
-inoremap ;; <esc>
+inoremap ;; <Esc>
 " }}}
-" <esc> exit terminal-mode {{{
-tnoremap <Esc> <C-\><C-n>
+" <esc> exit terminal-mode && Fzf buffers{{{
+tnoremap <expr> <Esc> (&filetype == "fzf") ? "<Esc>" : "<C-\><C-n>"
 " }}}
 " Speed Up Scrolling {{{
 nnoremap J 5j
@@ -461,24 +469,26 @@ exec 'nnoremap <Leader>sr :so ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><
 nnoremap <F2> :wa<Bar>exe "mksession! " . v:this_session<CR>:so ~/.vim/vim-sessions/
 " }}}
 " }}}
-"}}}  
+:augroup END
+"}}}
 " Buffers {{{
-" Create a new empty buffer
-nnoremap <leader>ne :enew<cr>
-nnoremap <leader>vne :vnew<cr>
 augroup buffer_control
-    autocmd!
+autocmd!
+" Create a new empty buffer {{{
+noremap <leader>ne :enew<cr>
+nnoremap <leader>vne :vnew<cr>
+" }}}
 " Buffer navigation (,,) (gb) (gB) {{{
-noremap <Leader>, <C-^>
+nnoremap <Leader>, <C-^>
 nnoremap <Tab> :bnext<CR>
 nnoremap <S-Tab> :bprevious<CR>
 " Close Buffers Properly {{{
 nnoremap <Leader>q :Bdelete<CR>
 " }}}
 " }}}
-augroup END
 " List Buffers with nb, accept a new buffer arg [1] {{{
 nnoremap <leader>b :ls<CR>:b<Space>
 " }}}
+augroup END
 " }}}
 " vim: foldmethod=marker:foldlevel=0:
