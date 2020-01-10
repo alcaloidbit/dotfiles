@@ -2,12 +2,12 @@
 " Leader Shortcut {{{
 let mapleader=","   " leader is comma
 " }}}
+" 256Colors {{{
+" set t_Co=256
+" }}}
 " Plugs mappings {{{
 " Tagbar {{{
-nnoremap <F8> :TagbarToggle<CR>
-" }}}
-" CtrlPTag {{{
-nnoremap <leader>. :CtrlPTag<CR>
+" nnoremap <F8> :TagbarToggle<CR>
 " }}}
 " Instant-markdown {{{
 nnoremap <leader>md :InstantMarkdownPreview<CR>
@@ -35,15 +35,15 @@ inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
 "  :on_completg': ['ncm2#on_complete#delay', 180,
 "               \ 'ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
 au User Ncm2Plugin call ncm2#register_source({
-        \ 'name' : 'css',
-        \ 'priority': 9,
-        \ 'subscope_enable': 1,
-        \ 'scope': ['css','scss'],
-        \ 'mark': 'css',
-        \ 'word_pattern': '[\w\-]+',
-        \ 'complete_pattern': ':\s*',
-        \ 'on_complete': ['ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
-        \ })
+            \ 'name' : 'css',
+            \ 'priority': 9,
+            \ 'subscope_enable': 1,
+            \ 'scope': ['css','scss'],
+            \ 'mark': 'css',
+            \ 'word_pattern': '[\w\-]+',
+            \ 'complete_pattern': ':\s*',
+            \ 'on_complete': ['ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
+            \ })
 " }}}
 " NERDTree {{{
 nnoremap <leader>e :OpenBookmark<space>
@@ -57,19 +57,22 @@ nnoremap <silent> <F9> :NERDTreeToggle<CR>
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 
 " Launch fzf with CTRL+P.
-nnoremap <silent> <C-p> :FZF -m<CR>
+" nnoremap <silent> <C-p> :FZF -m<CR>
+" if focus is on NERDTree buffer, switch to next split before opening FzF  
+nnoremap <silent> <expr> <C-p> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":FZF\<cr>"
 
 " Map a few common things to do with FZF.
 nnoremap <silent> lb :Buffers<CR>
 nnoremap <silent> <Leader>l :Lines<CR>
+nnoremap <silent> <Leader>. :BTags<CR>
 
 " Allow passing optional flags into the Rg command.
 autocmd VimEnter * command! -nargs=* Rg
-   \ call fzf#vim#grep(
-   \   'rg --column --line-number --no-heading --ignore-case --color "always" '.<q-args>, 1,
-   \   <bang>0 ? fzf#vim#with_preview('up:60%')
-   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-   \   <bang>0)
+            \ call fzf#vim#grep(
+            \   'rg --column --line-number --no-heading --ignore-case --color "always" '.<q-args>, 1,
+            \   <bang>0 ? fzf#vim#with_preview('up:60%')
+            \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+            \   <bang>0)
 " }}}
 " Rip-grep {{{
 nnoremap <leader>rg :Rg<space>
@@ -80,19 +83,30 @@ nmap <leader>fa <Plug>(FerretAck)
 nmap <leader>fl <Plug>(FerretLack)
 nmap <leader>fw <Plug>(FerretAckWord)
 nmap <leader>fr <Plug>(FerretAcks)
+nmap <leader>fb :Back<space>
+" }}}
+" Mini-yank {{{
+map <Leader>a <Plug>(miniyank-cycle)
+map <Leader>j <Plug>(miniyank-cycleback)
 " }}}
 " }}} 
 " Plugs Settings {{{
 " NERDTree {{{
+" Dont confirm for deleting opened buffer when deleting file 
+" fron NERDTree
+let NERDTreeAutoDeleteBuffer=1
+" AutoCD when NERDTreeRootDir change
+let NERDTreeChDirMode=2
+" Ignore list
 let NERDTreeIgnore=['node_modules', 
-                    \ 'package-lock.json',
-                    \ 'package.json',
-                    \ 'postcss.config.js',
-                    \ 'webpack.config.js' ]
+            \ 'package-lock.json',
+            \ 'package.json',
+            \ 'postcss.config.js',
+            \ 'webpack.config.js' ]
 " }}}
 " Lightline {{{
-    let g:lightline = {
-           \ 'colorscheme': 'gruvbox',
+let g:lightline = {
+            \ 'colorscheme': 'onedark',
             \ 'active'   : {
             \       'left': [ [ 'mode', 'paste' ],
             \                 [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
@@ -113,40 +127,46 @@ let g:UltiSnipsSnippetDirectories = ["~/.vim/UltiSnips/", "UltiSnips/"]
 " }}}
 " VimWiki {{{
 " vimwiki markdown support {{{
-    let g:vimwiki_ext2syntax = {  '.md': 'markdown', 
-                                \ '.markdowon': 'markdown', 
-                                \ '.mkd': 'markdown', 
-                                \ '.mdown' :'markdown'}
+let g:vimwiki_ext2syntax = {  '.md': 'markdown', 
+            \ '.markdowon': 'markdown', 
+            \ '.mkd': 'markdown', 
+            \ '.mdown' :'markdown'}
 
-   let g:instant_markdown_autostart = 0
+let g:instant_markdown_autostart = 0
 " }}}
-    let g:vimwiki_hl_headers = 1
-    let wiki_1 = {}
-    let wiki_1.path = '~/Documents/vimwiki/Main/'
-    let wiki_1.index = 'index'
+let g:vimwiki_hl_headers = 1
+let wiki_1 = {}
+let wiki_1.path = '~/Documents/vimwiki/Main/'
+let wiki_1.index = 'index'
 
 
-    let wiki_2 = {}
-    let wiki_2.path = '~/Documents/vimwiki/Culture/'
-    let wiki_2.index = 'Culture'
+let wiki_2 = {}
+let wiki_2.path = '~/Documents/vimwiki/Culture/'
+let wiki_2.index = 'Culture'
 
-    let wiki_3 = {}
-    let wiki_3.path = '~/Documents/vimwiki/Todo/'
-    let wiki_3.index = 'index'
+let wiki_3 = {}
+let wiki_3.path = '~/Documents/vimwiki/Todo/'
+let wiki_3.index = 'index'
 
-    let wiki_4 = {}
-    let wiki_4.path = '~/Documents/wikimd/'
-    let wiki_4.syntax = 'markdown'
-    let wiki_4.ext = '.md'
-    let wiki_4.index = 'index'
+let wiki_4 = {}
+let wiki_4.path = '~/Documents/wikimd/'
+let wiki_4.syntax = 'markdown'
+let wiki_4.ext = '.md'
+let wiki_4.index = 'index'
 
-    let wiki_5 = {}
-    let wiki_5.path = '~/.vim/mappings/'
-    let wiki_5.syntax = 'markdown'
-    let wiki_5.ext = '.md'
-    let wiki_5.index = 'index'
+let wiki_5 = {}
+let wiki_5.path = '~/.vim/mappings/'
+let wiki_5.syntax = 'markdown'
+let wiki_5.ext = '.md'
+let wiki_5.index = 'index'
 
-    let g:vimwiki_list = [wiki_1, wiki_2, wiki_3, wiki_4, wiki_5]
+let wiki_6 = {}
+let wiki_6.path = '~/www/upgrade17/wiki/'
+let wiki_6.syntax = 'markdown'
+let wiki_6.ext = '.md'
+let wiki_6.index = 'index'
+
+let g:vimwiki_list = [wiki_1, wiki_2, wiki_3, wiki_4, wiki_5, wiki_6]
 
 " }}}
 " Gutentags {{{
@@ -169,6 +189,8 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'SirVer/ultiSnips'
 Plugin 'StanAngeloff/php.vim'
+Plugin 'xolox/vim-session'
+Plugin 'xolox/vim-misc'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'bfredl/nvim-miniyank'
 Plugin 'ervandew/supertab'
@@ -178,8 +200,10 @@ Plugin 'honza/vim-snippets'
 Plugin 'itchyny/lightline.vim'
 Plugin 'joshdick/onedark.vim'
 Plugin 'junegunn/fzf.vim'
+Plugin 'gcmt/taboo.vim'
 " Plugin 'kien/ctrlp.vim'
 Plugin 'kshenoy/vim-signature'
+Plugin 'codeindulgence/vim-tig'
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'majutsushi/tagbar'
 " Modify * to also work with visual selection
@@ -207,14 +231,12 @@ Plugin 'tpope/vim-abolish'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-unimpaired'
 Plugin 'vimwiki/vimwiki'
 Plugin 'vundleVim/Vundle.vim'
 Plugin 'wincent/ferret'
 call vundle#end()
 filetype plugin indent on
-" }}}
-" Ctrlp {{{
-set runtimepath^=~/.vim/bundle/ctrlp.vim
 " }}}
 " Bbye {{{
 set runtimepath^=~/.vim/bundle/bbye
@@ -227,31 +249,34 @@ set completeopt=noinsert,menuone,noselect
 " }}}
 " PHPactor {{{
 " Include use statement
-nnoremap <Leader>u :call phpactor#UseAdd()<CR>
+" nnoremap <Leader>u :call phpactor#UseAdd()<CR>
 
 " Invoke the context menu
-nnoremap <Leader>mm :call phpactor#ContextMenu()<CR>
+" nnoremap <Leader>mm :call phpactor#ContextMenu()<CR>
 
 " Goto definition of class or class member under the cursor
-nnoremap <Leader>o :call phpactor#GotoDefinition()<CR>
+" nnoremap <Leader>o :call phpactor#GotoDefinition()<CR>
 
 " Show brief information about the symbol under the cursor 
-nnoremap <leader>K :call phpactor#Hover()<CR>
+" nnoremap <leader>K :call phpactor#Hover()<CR>
 
 " Transform the classes in the current file
-nnoremap <Leader>tt :call phpactor#Transform()<CR>
+" nnoremap <Leader>tt :call phpactor#Transform()<CR>
 
 " Generate a new class (replacing the current file)
-nnoremap <Leader>cc :call phpactor#ClassNew()<CR>
+" nnoremap <Leader>cc :call phpactor#ClassNew()<CR>
 
 " Extract expression (normal mode)
-nnoremap <silent><leader>ee :call phpactor#ExtractExpression(v:false)<CR>
+" nnoremap <silent><leader>ee :call phpactor#ExtractExpression(v:false)<CR>
 
 " Extract expression from selection
-vnoremap <silent><leader>ee :<C-u>call phpactor#ExtractExpression(v:true)<CR>
+" vnoremap <silent><leader>ee :<C-u>call phpactor#ExtractExpression(v:true)<CR>
 
 " Extract method from selection
-vnoremap <silent><Leader>em :<C-U>call phpactor#ExtractMethod()<CR>
+" vnoremap <silent><Leader>em :<C-U>call phpactor#ExtractMethod()<CR>
+" }}}
+" Vim-session {{{
+:let g:session_autoload='no'
 " }}}
 " }}}
 " Colors {{{
@@ -263,14 +288,16 @@ if (empty($TMUX))
         "For Neovim 0.1.3 and 0.1.4 < "https://github.com/neovim/neovim/pull/2198 >
         let $NVIM_TUI_ENABLE_TRUE_COLOR=1
     endif
-    if (has("termguicolors"))
+    if exists('+termguicolors')
+        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+        let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
         set termguicolors
     endif
 endif
 
 syntax on
 " colorscheme gruvbox
-colorscheme gruvbox
+colorscheme onedark
 " }}}
 " Local directories {{{
 set backupdir=~/.vim-tmp,~/.tmp,/var/tmp,/tmp
@@ -284,10 +311,11 @@ set encoding=utf-8 nobomb   " BOM often causes troubles
 set expandtab   " Tabs are spaces
 set foldcolumn=0    " Column to show folds
 set foldenable  " Enable folding
-set foldlevel=0 " Close all folds by default
-set foldlevelstart=10   " Start with fold level of 10
+set foldlevel=1  
+set foldlevelstart=10   " Start with fold level of / 
 set foldmethod=indent   " Fold based on indent level
 set foldnestmax=10  " Set max fold nesting level
+set gdefault    " Applies substitution globally 
 set hidden " When a buffer is brought to foreground, remember undo history and marks
 set history=1000 " Increase history from 20 default to 1000
 set hlsearch    " Highlight searches
@@ -304,6 +332,7 @@ set noshowmode  " Don't show the current mode (lightline.vim takes care of that 
 set nu " Enable line numbers
 set ruler   " Show the cursor position
 set scrolloff=3 " Start scrolling three lines before horizontal border of windows
+set sessionoptions+=tabpages,globals " for session being able to remember tab names (using Taboo plug) 
 set shiftwidth=4  " The # of spaces for indenting
 set shortmess=atI   " Don't show intro msg when starting vim
 set showcmd " show command in bottom bar
@@ -313,6 +342,8 @@ set sidescrolloff=3 " Start scrolling three columns before vertical border of wi
 set smartcase   " Ignore 'ignorecase' if search pattern contains uppercase characters
 set smarttab    " At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shiftwidth spaces
 set softtabstop=4   " Tab key results in 4 spaces
+set splitbelow
+set splitright
 set title   " Show the filename in the window titlebar
 set undodir=~/.vim/undodir
 set undofile    " Persistent undo
@@ -324,10 +355,21 @@ set winminheight=0  "Allow splits to be reduced to a single line
 " }}}
 " }}} 
 " Configuration {{{
-augroup general_config
-autocmd!
-" Pwd {{{
-nnoremap <leader>pwd :pwd<Cr>
+" Search using 'normal' regex {{{
+nnoremap / /\v
+vnoremap / /\v
+" }}}
+" Tab key match bracket pairs {{{
+nnoremap <tab> %
+vnoremap <tab> %
+" }}}
+" Get rid of Help Key ( <F!> ) {{{
+inoremap <F1> <ESC>
+nnoremap <F1> <ESC>
+vnoremap <F1> <ESC>
+" }}}
+" Set filetype= {{{
+nnoremap <Leader>sf :set filetype=
 " }}}
 " Mappings from Nick Janetakis Video {{{
 " Press * to search for the term under the cursor or a visual selection an 
@@ -343,7 +385,7 @@ nnoremap <leader>rn :%s///gcn<Left><Left><Left><Left>
 " by pressing *, visually selecting the range you want it to apply to and then
 " press a key below to replace all instances of it in the current selection.
 xnoremap <Leader>r :s///g<Left><Left>
-xnoremap <Leader>rc :s///g<Left><Left><Left>
+xnoremap <Leader>rc :s///gc<Left><Left><Left>
 
 " Type a replacement term and press . to repeat the replacement again.
 " Useful for replacing a few instances of the term (comparable to multiple
@@ -353,6 +395,8 @@ xnoremap <silent> s* "sy:let @/=@s<CR>cgn
 " }}}
 " Save/Quit vim moppings {{{
 noremap <leader>w :w<CR>
+noremap <C-s> :w<CR>
+noremap <leader>wa :wa<CR>
 noremap <leader>qq :qa!<CR>
 noremap <leader>wq :wqa<CR>
 " }}}
@@ -360,8 +404,11 @@ noremap <leader>wq :wqa<CR>
 noremap <leader>fd :find<space>
 " }}}
 " Edit/Source vimrc {{{
-nnoremap <Leader>vi :e ~/.vimrc<Cr>
+nnoremap <Leader>vi :vsp ~/.vimrc<Cr>
 nnoremap <Leader>so :source ~/.vimrc<CR>
+" }}}
+" put current line at the center of screen {{{
+nnoremap <leader>ff zz
 " }}}
 " <esc> is ;; {{{
 inoremap ;; <Esc>
@@ -374,6 +421,9 @@ nnoremap J 5j
 nnoremap K 5k
 xnoremap J 5j
 xnoremap K 5k
+" }}}
+" Go to 23 line down start of file {{{
+noremap <leader>gg gg23<C-e>
 " }}}
 " Splitting {{{
 noremap <leader>vs :vsplit<CR>
@@ -405,6 +455,9 @@ nnoremap te :tabedit<CR>
 nnoremap tn :tabnext<CR>
 noremap tp :tabprev<CR>
 " }}}
+" Tab Renaming {{{
+nnoremap <Leader>rr :TabooRename<Space>
+" }}} 
 " Tabs Switching {{{
 nnoremap <C-l> gt
 nnoremap <C-h> gT
@@ -418,15 +471,18 @@ command! W write
 " Clear last search (,n) {{{
 noremap <silent> <nowait> <Leader>n <Esc>:noh<CR>
 " }}}
-" Toggle Folds {{{
+" Folding {{{
+" toggle folds 
 nnoremap <space> za
-" }}}
-" Open/Close folds by one level {{{
-nnoremap <F4> zm
-nnoremap <F5> zr
-" }}}
-" Open 1 fold level {{{
-" nnoremap <F3> zr
+" Open fold under cursor recursively 
+nnoremap <Leader>fo zO
+" Open One fold
+nnoremap <Leader>fo zo
+
+" close all folds
+nnoremap <F4> :set foldlevel=1<CR>
+" Open all folds
+nnoremap <F5> zR
 " }}}
 " Indent file {{{
 noremap <F7> gg=G<C-o><C-o>
@@ -447,6 +503,10 @@ autocmd FileType js  setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType javascript  setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType smarty  setlocal shiftwidth=2 softtabstop=2 expandtab
 " }}}
+" fold level based on filetype {{{
+autocmd FileType php setlocal foldlevel=1
+" }}}
+
 " Highlight last inserted text {{{
 nnoremap gV `[v`]
 " }}}
@@ -465,25 +525,31 @@ set relativenumber
 let g:sessions_dir = '~/.vim/vim-sessions'
 exec 'nnoremap <Leader>ss :mks! ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
 exec 'nnoremap <Leader>sr :so ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
-" {{{ Save all open files, write this:session
-nnoremap <F2> :wa<Bar>exe "mksession! " . v:this_session<CR>:so ~/.vim/vim-sessions/
+
+" Save all open files, write this:session 
+" If no session file yet, save Session.vim in current working dir.
+" nnoremap <F2> :wa<Bar>exe "mksession! " . v:this_session . ""
 " }}}
-" }}}
-:augroup END
 "}}}
 " Buffers {{{
 augroup buffer_control
 autocmd!
 " Create a new empty buffer {{{
-noremap <leader>ne :enew<cr>
+nnoremap <leader>ne :enew<cr>
 nnoremap <leader>vne :vnew<cr>
 " }}}
 " Buffer navigation (,,) (gb) (gB) {{{
 nnoremap <Leader>, <C-^>
 nnoremap <Tab> :bnext<CR>
 nnoremap <S-Tab> :bprevious<CR>
-" Close Buffers Properly {{{
+" Close current buffer properly  ( Bbye ) {{{
 nnoremap <Leader>q :Bdelete<CR>
+" Close all other buffers except current one {{{
+nnoremap <leader>bd :<c-u>up <bar> %bd <bar> e#<cr>
+" }}}
+
+
+
 " }}}
 " }}}
 " List Buffers with nb, accept a new buffer arg [1] {{{

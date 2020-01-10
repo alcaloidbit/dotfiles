@@ -15,19 +15,45 @@ export ZSH="/home/fred-badlieutenant/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-# ZSH_THEME="robbyrussell"
-# ZSH_THEME="refined"
-# ZSH_THEME="bureau"
-# ZSH_THEME="minimal"
-# ZSH_THEME="ys"
-# ZSH_THEME="zero"
-# ZSH_THEME="linuxonly"
 ZSH_THEME="spaceship"
-# SPACESHIP_PROMPT CONFIGURATION
-# SPACESHIP_PROMPT_ORDER=()
-# SPACESHIP_USER_SHOW=(always)
-SPACESHIP_TIME_SHOW=(true)
-SPACESHIP_TIME_FORMAT=%T
+
+# CUSTOMIZE SPACESHIP
+SPACESHIP_NODE_DEFAULT_VERSION="v11.14.0"
+SPACESHIP_PROMPT_ORDER=(
+#  time          # Time stamps section
+  user          # Username section
+  dir           # Current directory section
+  host          # Hostname section
+  git           # Git section (git_branch + git_status)
+# hg            # Mercurial section (hg_branch  + hg_status)
+  package       # Package version
+# node          # Node.js section
+# ruby          # Ruby section
+# elixir        # Elixir section
+# xcode         # Xcode section
+# swift         # Swift section
+# golang        # Go section
+# php           # PHP section
+# rust          # Rust section
+# haskell       # Haskell Stack section
+# julia         # Julia section
+# docker        # Docker section
+# aws           # Amazon Web Services section
+# venv          # virtualenv section
+# conda         # conda virtualenv section
+# pyenv         # Pyenv section
+# dotnet        # .NET section
+# ember         # Ember.js section
+# kubecontext   # Kubectl context section
+# terraform     # Terraform workspace section
+  exec_time     # Execution time
+  line_sep      # Line break
+  battery       # Battery level and status
+# vi_mode       # Vi-mode indicator
+  jobs          # Background jobs indicator
+  exit_code     # Exit code section
+  char          # Prompt character
+)
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
@@ -87,7 +113,6 @@ plugins=(
   git
   gitignore
   git-prompt
-#  hacker-quotes
   z
   zsh-autosuggestions
   zsh-syntax-highlighting
@@ -98,7 +123,6 @@ source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 
 # User configuration
-
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
@@ -120,8 +144,12 @@ export LANG=fr_FR.UTF-8
 # Enable a better reverse search experience.
 #  Requires: https://github.com/junegunn/fzf (to use fzf in general)
 #  Requires: https://github.com/BurntSushi/ripgrep (for using rg below)
-export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git'"
+export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --no-ignore --glob '!.git'"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# export TERM=xterm-256color
+# Bat can be used as a colorizings pager for man, by setting the MANPAGER environment variable:
+export MANPAGER="sh -c 'col -bx | bat -l man -p'" 
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
