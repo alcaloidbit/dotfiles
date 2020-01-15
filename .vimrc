@@ -522,9 +522,9 @@ set relativenumber
 :augroup END
 " }}}
 " Vim Sessions {{{
-let g:sessions_dir = '~/.vim/vim-sessions'
-exec 'nnoremap <Leader>ss :mks! ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
-exec 'nnoremap <Leader>sr :so ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
+" let g:sessions_dir = '~/.vim/vim-sessions'
+" exec 'nnoremap <Leader>ss :mks! ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
+" exec 'nnoremap <Leader>sr :so ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
 
 " Save all open files, write this:session 
 " If no session file yet, save Session.vim in current working dir.
