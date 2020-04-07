@@ -2,77 +2,39 @@
 " Leader Shortcut {{{
 let mapleader=","   " leader is comma
 " }}}
-" 256Colors {{{
-" set t_Co=256
-" }}}
+" set path variable to current dir and to all directories under current
+" directory recursively. Now use :find + exact file name
+set path=$PWD/**
 " Plugs mappings {{{
-" Tagbar {{{
-" nnoremap <F8> :TagbarToggle<CR>
-" }}}
 " Instant-markdown {{{
 nnoremap <leader>md :InstantMarkdownPreview<CR>
 " }}}
 " Ncm2 {{{
-" suppress the annoying 'match x of y', 'The only match' and 'Pattern not
-" found' messages
-set shortmess+=c
 " CTRL-C doesn't trigger the InsertLeave autocmd . map to <ESC> instead.
 inoremap <c-c> <ESC>
-
 " When the <Enter> key is pressed while the popup menu is visible, it only
 " hides the menu. Use this mapping to close the menu and also start a new
 " line.
 inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
-
 " Use <TAB> to select the popup menu:
 " inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 " inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-" wrap existing omnifunc
-" Note that omnifunc does not run in background and may probably block the
-" editor. If you don't want to be blocked by omnifunc too often, you could
-" add 180ms delay before the omni wrapper:
-"  :on_completg': ['ncm2#on_complete#delay', 180,
-"               \ 'ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
-au User Ncm2Plugin call ncm2#register_source({
-            \ 'name' : 'css',
-            \ 'priority': 9,
-            \ 'subscope_enable': 1,
-            \ 'scope': ['css','scss'],
-            \ 'mark': 'css',
-            \ 'word_pattern': '[\w\-]+',
-            \ 'complete_pattern': ':\s*',
-            \ 'on_complete': ['ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
-            \ })
 " }}}
 " NERDTree {{{
-nnoremap <leader>e :OpenBookmark<space>
-nnoremap <leader>nf :NERDTreeFind<CR> 
-
+nnoremap <leader>b :OpenBookmark<Space>
+nnoremap <leader>gf :NERDTreeFind<CR> 
 nnoremap <silent> <F9> :NERDTreeToggle<CR>
 " close NERDTree if last buffer
 " autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 " }}}
 " FZF {{{
-let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
-
-" Launch fzf with CTRL+P.
-" nnoremap <silent> <C-p> :FZF -m<CR>
 " if focus is on NERDTree buffer, switch to next split before opening FzF  
 nnoremap <silent> <expr> <C-p> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":FZF\<cr>"
-
 " Map a few common things to do with FZF.
 nnoremap <silent> lb :Buffers<CR>
 nnoremap <silent> <Leader>l :Lines<CR>
 nnoremap <silent> <Leader>. :BTags<CR>
-
-" Allow passing optional flags into the Rg command.
-autocmd VimEnter * command! -nargs=* Rg
-            \ call fzf#vim#grep(
-            \   'rg --column --line-number --no-heading --ignore-case --color "always" '.<q-args>, 1,
-            \   <bang>0 ? fzf#vim#with_preview('up:60%')
-            \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-            \   <bang>0)
+nnoremap <silent> <leader>d :Files <C-r>=expand("%:h")<CR>/<CR>
 " }}}
 " Rip-grep {{{
 nnoremap <leader>rg :Rg<space>
@@ -91,6 +53,72 @@ map <Leader>j <Plug>(miniyank-cycleback)
 " }}}
 " }}} 
 " Plugs Settings {{{
+" Vim Plug  {{{
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+call plug#begin('~/.vim/plugged')
+Plug 'SirVer/ultiSnips'
+Plug 'albanm/vuetify-vim'
+Plug 'dense-analysis/ale'
+" Plug 'vim-syntastic/syntastic'
+Plug 'jlanzarotta/bufexplorer'
+Plug 'StanAngeloff/php.vim'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'bfredl/nvim-miniyank'
+Plug 'ervandew/supertab'
+Plug 'epilande/vim-es2015-snippets'
+Plug 'alvan/vim-closetag'
+Plug 'godlygeek/tabular'
+Plug 'haya14busa/is.vim'
+Plug 'honza/vim-snippets'
+Plug 'itchyny/lightline.vim'
+Plug 'joshdick/onedark.vim'
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
+Plug 'kshenoy/vim-signature'
+Plug 'codeindulgence/vim-tig'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'majutsushi/tagbar'
+" Modify * to also work with visual selection
+Plug 'nelstrom/vim-visual-star-search'
+Plug 'mattn/emmet-vim'
+Plug 'mileszs/ack.vim'
+Plug 'moll/vim-bbye'
+Plug 'pangloss/vim-javascript'
+Plug 'airblade/vim-gitgutter'
+Plug 'hail2u/vim-css3-syntax'
+Plug 'ap/vim-css-color'
+Plug 'mhinz/vim-startify'
+Plug 'morhetz/gruvbox',
+Plug 'ncm2/ncm2'
+Plug 'roxma/nvim-yarp'
+Plug 'ncm2/ncm2-bufword'
+Plug 'ncm2/ncm2-path'
+Plug 'ncm2/ncm2-tern'
+Plug 'ncm2/ncm2-html-subscope',
+Plug 'phpactor/ncm2-phpactor'
+Plug 'phpactor/phpactor', {'do': 'composer install', 'for': 'php'}
+Plug 'plasticboy/vim-markdown'
+Plug 'ryanoasis/vim-devicons'
+Plug 'scrooloose/nerdtree'
+Plug 'sheerun/vim-polyglot'
+Plug 'stephpy/vim-php-cs-fixer'
+Plug 'suan/vim-instant-markdown', {'rtp': 'after'}
+Plug 'townk/vim-autoclose'
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-unimpaired'
+Plug 'vimwiki/vimwiki'
+Plug 'wincent/ferret'
+call plug#end()
+" }}}
 " NERDTree {{{
 " Dont confirm for deleting opened buffer when deleting file 
 " fron NERDTree
@@ -102,21 +130,100 @@ let NERDTreeIgnore=['node_modules',
             \ 'package-lock.json',
             \ 'package.json',
             \ 'postcss.config.js',
+            \ 'tags',
+            \ 'tags.tmp',
+            \ 'tags.lock',
             \ 'webpack.config.js' ]
 " }}}
 " Lightline {{{
 let g:lightline = {
+            \ 'enable' : {
+            \ 'tabline': 1,
+            \ 'statusline': 1
+            \},
+            \ 'tabline' : {
+            \   'left': [ ['tabs'] ],
+            \   'right': [ [ 'sessionwidget' ] ],
+            \   'tabline_separator'  : {'left': "\ue0b0", 'right':''},
+            \   'tabline_subseparator':{'left':'|', 'right':'|'}
+            \ },
             \ 'colorscheme': 'onedark',
             \ 'active'   : {
             \       'left': [ [ 'mode', 'paste' ],
-            \                 [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+            \                 [ 'gitbranch', 'readonly', 'filename', 'modified', 'obsession' ] ]
+            \ },
+            \ 'tab_component_function': {
+            \   'filename': 'LightlineTabname'
             \ },
             \ 'component_function' : {
             \ 'gitbranch': 'fugitive#head'
             \},
+            \ 'component_expand' : {
+            \  'mytabline': 'MyTabLine',
+            \  'sessionwidget': 'SessionWidget'
+            \ },
             \ 'separator'  : {'left': "\ue0b0", 'right':''},
             \ 'subseparator':{'left':'|', 'right':'|'}
             \}
+
+function! LightlineTabname(n) abort
+    "let bufnr = tabpagebuflist(a:n)[tabpagewinnr(a:n)-1]
+    "let fname = expand('#' . bufnr . ':t')
+    "return fnamemodify(fname, ":h:t") . "/" . fnamemodify(fname, ":t")
+    let buflist = tabpagebuflist(a:n)
+    let winnr = tabpagewinnr(a:n)
+    let currentBuffPath = bufname(buflist[winnr - 1])
+    return fnamemodify(currentBuffPath, ":h:t") . "/" . fnamemodify(currentBuffPath, ":t")
+endfunction
+" Required for MyTabLine()
+function! MyTabLabel(n)
+    let buflist = tabpagebuflist(a:n)
+    let winnr = tabpagewinnr(a:n)
+    let currentBuffPath = bufname(buflist[winnr - 1])
+    return fnamemodify(currentBuffPath, ":h:t") . "/" . fnamemodify(currentBuffPath, ":t")
+endfunction
+" Our custom TabLine function
+function! MyTabLine() 
+    let s = ''
+    for i in range(tabpagenr('$'))
+        " select the highlighting
+        if i + 1 == tabpagenr()
+            let s .= '%=%#diffadd#'
+            let s .= '%#TabLineSel#'
+        els
+            let s .= '%#TabLine#'
+        endif
+        let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
+
+    endfor
+
+    " after the last tab fill with TabLineFill and reset tab page nr
+    let s .= '%#TabLineFill#%T'
+    return s
+endfunction
+
+function! SessionWidget()
+    let s = '%=' " Right-align after this
+
+    if exists('g:this_obsession')
+        let s .= '%#diffadd#' " Use the "DiffAdd" color if in a session
+    endif
+
+    " add vim-obsession status if available
+    if exists(':Obsession')
+        let s .= "%{ObsessionStatus()}"
+        if exists('v:this_session') && v:this_session != ''
+            let s:obsession_string = v:this_session
+            let s:obsession_parts = split(s:obsession_string, '/')
+            let s:obsession_filename = s:obsession_parts[-1]
+            let s .= ' ' . s:obsession_filename . ' '
+            let s .= '%*' " Restore default color
+        endif
+    endif
+
+    return s
+endfunction
+
 " }}}
 " Enable Matchit plugin {{{
 runtime macros/matchit.vim
@@ -125,49 +232,12 @@ runtime macros/matchit.vim
 let g:UltiSnipsListSnippets = "<F3>"
 let g:UltiSnipsSnippetDirectories = ["~/.vim/UltiSnips/", "UltiSnips/"]
 " }}}
-" VimWiki {{{
-" vimwiki markdown support {{{
+" Vimwiki markdown support {{{
 let g:vimwiki_ext2syntax = {  '.md': 'markdown', 
             \ '.markdowon': 'markdown', 
             \ '.mkd': 'markdown', 
             \ '.mdown' :'markdown'}
-
 let g:instant_markdown_autostart = 0
-" }}}
-let g:vimwiki_hl_headers = 1
-let wiki_1 = {}
-let wiki_1.path = '~/Documents/vimwiki/Main/'
-let wiki_1.index = 'index'
-
-
-let wiki_2 = {}
-let wiki_2.path = '~/Documents/vimwiki/Culture/'
-let wiki_2.index = 'Culture'
-
-let wiki_3 = {}
-let wiki_3.path = '~/Documents/vimwiki/Todo/'
-let wiki_3.index = 'index'
-
-let wiki_4 = {}
-let wiki_4.path = '~/Documents/wikimd/'
-let wiki_4.syntax = 'markdown'
-let wiki_4.ext = '.md'
-let wiki_4.index = 'index'
-
-let wiki_5 = {}
-let wiki_5.path = '~/.vim/mappings/'
-let wiki_5.syntax = 'markdown'
-let wiki_5.ext = '.md'
-let wiki_5.index = 'index'
-
-let wiki_6 = {}
-let wiki_6.path = '~/www/upgrade17/wiki/'
-let wiki_6.syntax = 'markdown'
-let wiki_6.ext = '.md'
-let wiki_6.index = 'index'
-
-let g:vimwiki_list = [wiki_1, wiki_2, wiki_3, wiki_4, wiki_5, wiki_6]
-
 " }}}
 " Gutentags {{{
 let g:gutentags_trace=0
@@ -179,71 +249,42 @@ augroup MyGutentagsStatusLineRefresher
 augroup END
 " }}}
 " FZF {{{
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 set rtp+=~/.fzf
-" }}}
-" Vundle Manager  {{{
-" git clone https://github.com/VundleVim/Vundle.vim.git  ~/.vim/bundle/Vundle.vim
-filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" let Vundle manage Vundle, required
-Plugin 'SirVer/ultiSnips'
-Plugin 'StanAngeloff/php.vim'
-Plugin 'xolox/vim-session'
-Plugin 'xolox/vim-misc'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
-Plugin 'bfredl/nvim-miniyank'
-Plugin 'ervandew/supertab'
-Plugin 'godlygeek/tabular'
-Plugin 'haya14busa/is.vim'
-Plugin 'honza/vim-snippets'
-Plugin 'itchyny/lightline.vim'
-Plugin 'joshdick/onedark.vim'
-Plugin 'junegunn/fzf.vim'
-Plugin 'gcmt/taboo.vim'
-" Plugin 'kien/ctrlp.vim'
-Plugin 'kshenoy/vim-signature'
-Plugin 'codeindulgence/vim-tig'
-Plugin 'ludovicchabant/vim-gutentags'
-Plugin 'majutsushi/tagbar'
-" Modify * to also work with visual selection
-Plugin 'nelstrom/vim-visual-star-search'
-Plugin 'mattn/emmet-vim'
-Plugin 'mileszs/ack.vim'
-Plugin 'moll/vim-bbye'
-Plugin 'morhetz/gruvbox'
-Plugin 'ncm2/ncm2'
-Plugin 'ncm2/ncm2-bufword'
-Plugin 'ncm2/ncm2-path'
-Plugin 'ncm2/ncm2-tern'
-Plugin 'neomake/neomake'
-Plugin 'phpactor/ncm2-phpactor'
-Plugin 'phpactor/phpactor', {'do': 'composer install', 'for': 'php'}
-Plugin 'plasticboy/vim-markdown'
-Plugin 'roxma/nvim-yarp'
-Plugin 'ryanoasis/vim-devicons'
-Plugin 'scrooloose/nerdtree'
-Plugin 'sheerun/vim-polyglot'
-Plugin 'stephpy/vim-php-cs-fixer'
-Plugin 'suan/vim-instant-markdown', {'rtp': 'after'}
-Plugin 'townk/vim-autoclose'
-Plugin 'tpope/vim-abolish'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-unimpaired'
-Plugin 'vimwiki/vimwiki'
-Plugin 'vundleVim/Vundle.vim'
-Plugin 'wincent/ferret'
-call vundle#end()
-filetype plugin indent on
+" Allow passing optional flags into the Rg command.
+autocmd VimEnter * command! -nargs=* Rg
+            \ call fzf#vim#grep(
+            \   'rg --column --line-number --no-heading --ignore-case --color "always" '.<q-args>, 1,
+            \   <bang>0 ? fzf#vim#with_preview('up:60%')
+            \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+            \   <bang>0)
 " }}}
 " Bbye {{{
 set runtimepath^=~/.vim/bundle/bbye
 " }}}
 " Ncm2 {{{
-" enable ncm2 for all buffers 
+let $NVIM_PYTHON_LOG_FILE="/tmp/nvim_log"
+let $NVIM_PYTHON_LOG_LEVEL="DEBUG"
+" suppress the annoying 'match x of y', 'The only match' and 'Pattern not
+" found' messages
+set shortmess+=c
 autocmd BufEnter * call ncm2#enable_for_buffer()
+" wrap existing omnifunc
+" Note that omnifunc does not run in background and may probably block the
+" editor. If you don't want to be blocked by omnifunc too often, you could
+" add 180ms delay before the omni wrapper:
+"  :on_completg': ['ncm2#on_complete#delay', 180,
+"               \ 'ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
+au User Ncm2Plugin call ncm2#register_source({
+            \ 'name' : 'css',
+            \ 'priority': 9,
+            \ 'subscope_enable': 1,
+            \ 'scope': ['css','scss'],
+            \ 'mark': 'css',
+            \ 'word_pattern': '[\w\-]+',
+            \ 'complete_pattern': ':\s*',
+            \ 'on_complete': ['ncm2#on_complete#omni', 'csscomplete#CompleteCSS'],
+            \ })
 " Important\: :help Ncm2PopupOpen for more Information
 set completeopt=noinsert,menuone,noselect
 " }}}
@@ -275,8 +316,30 @@ set completeopt=noinsert,menuone,noselect
 " Extract method from selection
 " vnoremap <silent><Leader>em :<C-U>call phpactor#ExtractMethod()<CR>
 " }}}
-" Vim-session {{{
-:let g:session_autoload='no'
+" ALE {{{
+let g:ale_linters_explicit = 1
+
+let g:ale_linters = {
+            \ 'javascript': ['eslint'],
+            \ 'vue': ['eslint', 'vls']
+            \ }
+let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
+
+let g:ale_fixers = {
+    \ 'javascript': ['eslint'],
+    \ 'vue': ['eslint']
+    \ }
+let g:ale_fix_on_save = 1
+
+"Show 5 lines of errors (default: 10)
+let g:ale_list_window_size = 5
+
+let g:ale_sign_error = ''
+let g:ale_sign_warning = '' 
+" }}}
+" vim-closetag {{{
+  let g:closetag_filenames = '*.html,*.xhtml,*.xml,*.vue,*.php,*.phtml,*.js,*.jsx,*.coffee,*.erb'
+" }}}
 " }}}
 " }}}
 " Colors {{{
@@ -300,8 +363,8 @@ syntax on
 colorscheme onedark
 " }}}
 " Local directories {{{
-set backupdir=~/.vim-tmp,~/.tmp,/var/tmp,/tmp
-set directory=~/.vim-tmp,~/.tmp,/var/tmp,/tmp
+set backupdir^=~/.vim-tmp,~/.tmp,/var/tmp,/tmp
+set directory^=~/.vim-tmp,~/.tmp,/var/tmp,/tmp
 " }}}
 " Options {{{
 set autoindent  " Copy indent from last line when starting new line
@@ -352,7 +415,6 @@ set wildignore+=*/smarty/*,*/vendor/*,*/.git/*,*/doc/*,*/node_modules/*
 set wildmenu    " Hitting TAB in command mode will show possible completions above command line
 " set wildmode=list:longest   " Complete only until point of ambiguity
 set winminheight=0  "Allow splits to be reduced to a single line
-" }}}
 " }}} 
 " Configuration {{{
 " Search using 'normal' regex {{{
@@ -411,7 +473,7 @@ nnoremap <Leader>so :source ~/.vimrc<CR>
 nnoremap <leader>ff zz
 " }}}
 " <esc> is ;; {{{
-inoremap ;; <Esc>
+inoremap kj <Esc>
 " }}}
 " <esc> exit terminal-mode && Fzf buffers{{{
 tnoremap <expr> <Esc> (&filetype == "fzf") ? "<Esc>" : "<C-\><C-n>"
@@ -426,9 +488,13 @@ xnoremap K 5k
 noremap <leader>gg gg23<C-e>
 " }}}
 " Splitting {{{
-noremap <leader>vs :vsplit<CR>
-noremap <leader>sp :split<CR>
+noremap <leader>v :vsplit<CR>
+noremap <leader>s :split<CR>
 noremap <leader>cl :close<CR>
+" Open a new blank buffer in a vertical split
+nnoremap <leader>vn :vnew<cr>
+" Open a new blank buffer in a horizontal split
+nnoremap <leader>sn :new<cr>
 " }}}
 " Faster Split resizing (+,-) {{{
 if bufwinnr(1)
@@ -474,10 +540,6 @@ noremap <silent> <nowait> <Leader>n <Esc>:noh<CR>
 " Folding {{{
 " toggle folds 
 nnoremap <space> za
-" Open fold under cursor recursively 
-nnoremap <Leader>fo zO
-" Open One fold
-nnoremap <Leader>fo zo
 
 " close all folds
 nnoremap <F4> :set foldlevel=1<CR>
@@ -501,6 +563,7 @@ autocmd FileType tpl setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType json setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType js  setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType javascript  setlocal shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType vue  setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType smarty  setlocal shiftwidth=2 softtabstop=2 expandtab
 " }}}
 " fold level based on filetype {{{
@@ -508,7 +571,7 @@ autocmd FileType php setlocal foldlevel=1
 " }}}
 
 " Highlight last inserted text {{{
-nnoremap gV `[v`]
+nnoremap <leader>gh `[v`]
 " }}}
 " Json syntax highlighting {{{
 autocmd BufNewFile, BufRead * .json set ft=javascript
@@ -522,39 +585,49 @@ set relativenumber
 :augroup END
 " }}}
 " Vim Sessions {{{
-" let g:sessions_dir = '~/.vim/vim-sessions'
-" exec 'nnoremap <Leader>ss :mks! ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
-" exec 'nnoremap <Leader>sr :so ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
-
+let g:sessions_dir = '~/.vim/vim-sessions'
+exec 'nnoremap <Leader>ss :Obsession ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
+exec 'nnoremap <Leader>sr :so ' . g:sessions_dir . '/*.vim<C-D><BS><BS><BS><BS><BS>'
+nnoremap <Leader>sp :Obsession!<CR>
 " Save all open files, write this:session 
 " If no session file yet, save Session.vim in current working dir.
 " nnoremap <F2> :wa<Bar>exe "mksession! " . v:this_session . ""
 " }}}
-"}}}
+"}}} 
 " Buffers {{{
 augroup buffer_control
-autocmd!
-" Create a new empty buffer {{{
-nnoremap <leader>ne :enew<cr>
-nnoremap <leader>vne :vnew<cr>
-" }}}
-" Buffer navigation (,,) (gb) (gB) {{{
-nnoremap <Leader>, <C-^>
-nnoremap <Tab> :bnext<CR>
-nnoremap <S-Tab> :bprevious<CR>
-" Close current buffer properly  ( Bbye ) {{{
-nnoremap <Leader>q :Bdelete<CR>
-" Close all other buffers except current one {{{
-nnoremap <leader>bd :<c-u>up <bar> %bd <bar> e#<cr>
-" }}}
-
-
-
-" }}}
-" }}}
-" List Buffers with nb, accept a new buffer arg [1] {{{
-nnoremap <leader>b :ls<CR>:b<Space>
-" }}}
+    autocmd!
+    " Buffer navigation (,,) (gb) (gB) {{{
+    nnoremap <Leader>, <C-^>
+    nnoremap <Tab> :bnext<CR>
+    nnoremap <S-Tab> :bprevious<CR>
+    " Close current buffer properly  ( Bbye ) {{{
+    nnoremap <Leader>q :Bdelete<CR>
+    " Close all other buffers except current one {{{
+    nnoremap <leader>bd :<c-u>up <bar> %bd <bar> e#<cr>
+    " }}}
+    " }}}
+    " }}}
+    " List Buffers with nb, accept a new buffer arg [1] {{{
+    " nnoremap <leader>b :ls<CR>:b<Space>
+    " }}}
 augroup END
 " }}}
+" FASD change CWD {{{
+" Z - cd to recent / frequent directories
+command! -nargs=* Z :call Z(<f-args>)
+function! Z(...)
+    let cmd = 'fasd -d -e printf'
+    for arg in a:000
+        let cmd = cmd . '  ' . arg
+    endfor
+    let path = system(cmd)
+    if isdirectory(path)
+        echo path
+        exec 'cd' fnameescape(path)
+    endif
+endfunction
+nnoremap <leader>e :Z<Space>
+" }}}
+let g:startify_session_dir = '~/.vim/vim-sessions'
 " vim: foldmethod=marker:foldlevel=0:

@@ -119,6 +119,7 @@ plugins=(
   colorize
   common-aliases
   extract
+  fasd
   git
   gitignore
   git-prompt
@@ -160,13 +161,19 @@ export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --no-ignore --glob '!.g
 # Bat can be used as a colorizings pager for man, by setting the MANPAGER environment variable:
 export MANPAGER="sh -c 'col -bx | bat -l man -p'" 
 
+# FASD + FZF
+function t() {
+    fasdlist=$( fasd -d -l -r $1 | \
+        fzf --query="$1 " --select-1 --exit-0 --height=25% --reverse --tac --no-sort --cycle) &&
+    cd "$fasdlist"
+}
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
+# alias zsahconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 setopt autocd 
 setopt autopushd 
@@ -177,12 +184,14 @@ export BROWSER=/usr/bin/google-chrome
 
 # eval `dircolors ~/.dir_colors/dircolors`
 
+fpath=($fpath "/home/fred-badlieutenant/.zfunctions")
 autoload -Uz promptinit; 
 promptinit
 prompt spaceship
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" ]]]
-eval $(dircolors -b $HOME/.dircolors)
+# export NVM_DIR="$HOME/.nvm"
+#' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" ]]]
 
+export PATH="$HOME/.npm-global/bin:$PATH"
+unalias t
