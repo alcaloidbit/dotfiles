@@ -53,6 +53,9 @@ map <Leader>j <Plug>(miniyank-cycleback)
 " }}}
 " }}} 
 " Plugs Settings {{{
+" Rainbow parantheses (use :RainbowTopggle to enable/disable){{{
+let g:rainbow_active = 1
+" }}}
 " Vim Plug  {{{
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -64,7 +67,6 @@ Plug 'SirVer/ultiSnips'
 Plug 'albanm/vuetify-vim'
 Plug 'dense-analysis/ale'
 " Plug 'vim-syntastic/syntastic'
-Plug 'jlanzarotta/bufexplorer'
 Plug 'StanAngeloff/php.vim'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'bfredl/nvim-miniyank'
@@ -76,11 +78,9 @@ Plug 'haya14busa/is.vim'
 Plug 'honza/vim-snippets'
 Plug 'itchyny/lightline.vim'
 Plug 'joshdick/onedark.vim'
+Plug 'luochen1990/rainbow'
 Plug 'junegunn/fzf.vim'
-Plug 'junegunn/goyo.vim'
-Plug 'junegunn/limelight.vim'
 Plug 'kshenoy/vim-signature'
-Plug 'codeindulgence/vim-tig'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
 " Modify * to also work with visual selection
