@@ -1,10 +1,6 @@
 " Settings {{{
-" Leader Shortcut {{{
-let mapleader=","   " leader is comma
-" }}}
-" set path variable to current dir and to all directories under current
-" directory recursively. Now use :find + exact file name
-set path=$PWD/**
+let mapleader=","   " Leader is comma
+set path=$PWD/**    " Add current directory + sub-directories recursively to path
 " Plugs mappings {{{
 " Instant-markdown {{{
 nnoremap <leader>md :InstantMarkdownPreview<CR>
@@ -47,14 +43,21 @@ nmap <leader>fw <Plug>(FerretAckWord)
 nmap <leader>fr <Plug>(FerretAcks)
 nmap <leader>fb :Back<space>
 " }}}
-" Mini-yank {{{
-map <Leader>a <Plug>(miniyank-cycle)
-map <Leader>j <Plug>(miniyank-cycleback)
+" PHPStan {{{
+let g:phpstan_analyse_level = 7
+" }}}
+" mini-yank {{{
+map p <Plug>(miniyank-autoput)
+map P <Plug>(miniyank-autoPut)
+map <leader>a <Plug>(miniyank-cycle)
 " }}}
 " }}} 
 " Plugs Settings {{{
+" startify {{{
+let g:startify_session_dir = '~/.vim/vim-sessions'
+" }}}
 " Rainbow parantheses (use :RainbowTopggle to enable/disable){{{
-let g:rainbow_active = 1
+let g:rainbow_active = 0
 " }}}
 " Vim Plug  {{{
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -66,8 +69,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'SirVer/ultiSnips'
 Plug 'albanm/vuetify-vim'
 Plug 'dense-analysis/ale'
-" Plug 'vim-syntastic/syntastic'
 Plug 'StanAngeloff/php.vim'
+Plug 'phpstan/vim-phpstan'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'bfredl/nvim-miniyank'
 Plug 'ervandew/supertab'
@@ -77,6 +80,8 @@ Plug 'godlygeek/tabular'
 Plug 'haya14busa/is.vim'
 Plug 'honza/vim-snippets'
 Plug 'itchyny/lightline.vim'
+Plug 'tobyS/vmustache'
+Plug 'tobyS/pdv'
 Plug 'joshdick/onedark.vim'
 Plug 'luochen1990/rainbow'
 Plug 'junegunn/fzf.vim'
@@ -94,6 +99,7 @@ Plug 'hail2u/vim-css3-syntax'
 Plug 'ap/vim-css-color'
 Plug 'mhinz/vim-startify'
 Plug 'morhetz/gruvbox',
+Plug 'qbbr/vim-symfony'
 Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
 Plug 'ncm2/ncm2-bufword'
@@ -103,6 +109,7 @@ Plug 'ncm2/ncm2-html-subscope',
 Plug 'phpactor/ncm2-phpactor'
 Plug 'phpactor/phpactor', {'do': 'composer install', 'for': 'php'}
 Plug 'plasticboy/vim-markdown'
+Plug 'jiangmiao/auto-pairs'
 Plug 'ryanoasis/vim-devicons'
 Plug 'scrooloose/nerdtree'
 Plug 'sheerun/vim-polyglot'
@@ -167,9 +174,6 @@ let g:lightline = {
             \}
 
 function! LightlineTabname(n) abort
-    "let bufnr = tabpagebuflist(a:n)[tabpagewinnr(a:n)-1]
-    "let fname = expand('#' . bufnr . ':t')
-    "return fnamemodify(fname, ":h:t") . "/" . fnamemodify(fname, ":t")
     let buflist = tabpagebuflist(a:n)
     let winnr = tabpagewinnr(a:n)
     let currentBuffPath = bufname(buflist[winnr - 1])
@@ -258,11 +262,13 @@ autocmd VimEnter * command! -nargs=* Rg
             \   <bang>0 ? fzf#vim#with_preview('up:60%')
             \           : fzf#vim#with_preview('right:50%:hidden', '?'),
             \   <bang>0)
-" }}}
+let g:fzf_files_options = '--preview "bat --color always --style numbers {2..} | head -'.&lines.'"'
+
+"}}}
 " Bbye {{{
 set runtimepath^=~/.vim/bundle/bbye
 " }}}
-" Ncm2 {{{
+" hNcm2 {{{
 let $NVIM_PYTHON_LOG_FILE="/tmp/nvim_log"
 let $NVIM_PYTHON_LOG_LEVEL="DEBUG"
 " suppress the annoying 'match x of y', 'The only match' and 'Pattern not
@@ -343,9 +349,6 @@ let g:ale_sign_warning = ''
 " }}}
 " }}}
 " Colors {{{
-" Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
-" If using tmux 2.2 or later, you can remove the outermost $TMUX check and use
-" tmux's 24-bit color support.
 if (empty($TMUX))
     if (has("nvim"))
         "For Neovim 0.1.3 and 0.1.4 < "https://github.com/neovim/neovim/pull/2198 >
@@ -357,7 +360,6 @@ if (empty($TMUX))
         set termguicolors
     endif
 endif
-
 syntax on
 " colorscheme gruvbox
 colorscheme onedark
@@ -408,6 +410,9 @@ set softtabstop=4   " Tab key results in 4 spaces
 set splitbelow
 set splitright
 set title   " Show the filename in the window titlebar
+" Make the keyboard faaaaast
+set ttyfast
+set timeout timeoutlen=1000 ttimeoutlen=50
 set undodir=~/.vim/undodir
 set undofile    " Persistent undo
 set wildignore+=*.jpg,*.jpeg,*.gif,*.png,*.min.js
@@ -420,10 +425,6 @@ set winminheight=0  "Allow splits to be reduced to a single line
 " Search using 'normal' regex {{{
 nnoremap / /\v
 vnoremap / /\v
-" }}}
-" Tab key match bracket pairs {{{
-nnoremap <tab> %
-vnoremap <tab> %
 " }}}
 " Get rid of Help Key ( <F!> ) {{{
 inoremap <F1> <ESC>
@@ -629,5 +630,4 @@ function! Z(...)
 endfunction
 nnoremap <leader>e :Z<Space>
 " }}}
-let g:startify_session_dir = '~/.vim/vim-sessions'
 " vim: foldmethod=marker:foldlevel=0:
