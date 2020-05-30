@@ -80,6 +80,7 @@ Plug 'godlygeek/tabular'
 Plug 'haya14busa/is.vim'
 Plug 'honza/vim-snippets'
 Plug 'itchyny/lightline.vim'
+Plug 'arnaud-lb/vim-php-namespace'
 Plug 'tobyS/vmustache'
 Plug 'tobyS/pdv'
 Plug 'joshdick/onedark.vim'
@@ -126,6 +127,14 @@ Plug 'vimwiki/vimwiki'
 Plug 'wincent/ferret'
 call plug#end()
 " }}}
+" php-namespace {{{
+function! IPhpInsertUse()
+    call PhpInsertUse()
+    call feedkeys('a', 'n')
+endfunction
+autocmd FileType php inoremap <leader>u <Esc>:call IPhpInsertUse()<CR>
+autocmd FileType php noremap <leader>U <Esc>:call PhpInsertUse()<CR>
+" }}}
 " NERDTree {{{
 " Dont confirm for deleting opened buffer when deleting file 
 " fron NERDTree
@@ -157,13 +166,14 @@ let g:lightline = {
             \ 'colorscheme': 'onedark',
             \ 'active'   : {
             \       'left': [ [ 'mode', 'paste' ],
-            \                 [ 'gitbranch', 'readonly', 'filename', 'modified', 'obsession' ] ]
+            \                 [ 'gitbranch', 'readonly', 'filename', 'modified', 'gutentags' ] ]
             \ },
             \ 'tab_component_function': {
             \   'filename': 'LightlineTabname'
             \ },
             \ 'component_function' : {
-            \ 'gitbranch': 'fugitive#head'
+            \ 'gitbranch': 'fugitive#head',
+            \ 'gutentags': 'gutentags#statusline'
             \},
             \ 'component_expand' : {
             \  'mytabline': 'MyTabLine',
@@ -227,8 +237,11 @@ function! SessionWidget()
 
     return s
 endfunction
-
 " }}}
+" PDV (PHP Doc) {{{
+let g:pdv_template_dir = $HOME ."/.vim/plugged/pdv/templates_snip"
+nnoremap <leader>k :call pdv#DocumentWithSnip()<CR>
+"}}}
 " Enable Matchit plugin {{{
 runtime macros/matchit.vim
 " }}}
@@ -244,8 +257,17 @@ let g:vimwiki_ext2syntax = {  '.md': 'markdown',
 let g:instant_markdown_autostart = 0
 " }}}
 " Gutentags {{{
+let g:gutentags_add_default_project_roots = 0
+let g:gutentags_project_root = ['package.json', '.git']
+let g:gutentags_cache_dir = expand('~/.cache/nvim/ctags/')
+command! -nargs=0 GutentagsClearCache call system('rm ' . g:gutentags_cache_dir . '/*')
+
+let g:gutentags_generate_on_new = 1
+let g:gutentags_generate_on_missing = 1
+let g:gutentags_generate_on_write = 1
+let g:gutentags_generate_on_empty_buffer = 0
 let g:gutentags_trace=0
-" let g:gutentags_ctags_exclude=["timpope/*"]
+
 augroup MyGutentagsStatusLineRefresher
     autocmd!
     autocmd User GutentagsUpdating call lightline#update()
@@ -258,11 +280,12 @@ set rtp+=~/.fzf
 " Allow passing optional flags into the Rg command.
 autocmd VimEnter * command! -nargs=* Rg
             \ call fzf#vim#grep(
-            \   'rg --column --line-number --no-heading --ignore-case --color "always" '.<q-args>, 1,
+            \   'rg --column --line-number --no-hidden --no-heading --ignore-case --color "always" '.<q-args>, 1,
             \   <bang>0 ? fzf#vim#with_preview('up:60%')
             \           : fzf#vim#with_preview('right:50%:hidden', '?'),
             \   <bang>0)
-let g:fzf_files_options = '--preview "bat --color always --style numbers {2..} | head -'.&lines.'"'
+
+let g:fzf_files_options = '--preview "bat --color always --style=numbers --color=always {} | head -500"'
 
 "}}}
 " Bbye {{{
@@ -422,6 +445,9 @@ set wildmenu    " Hitting TAB in command mode will show possible completions abo
 set winminheight=0  "Allow splits to be reduced to a single line
 " }}} 
 " Configuration {{{
+" Add namespace for the currently edited Class file PHP {{{
+map <F6> :r!~/Script/namespace %<CR>
+" }}}
 " Search using 'normal' regex {{{
 nnoremap / /\v
 vnoremap / /\v
@@ -566,6 +592,7 @@ autocmd FileType js  setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType javascript  setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType vue  setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType smarty  setlocal shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType html.twig  setlocal shiftwidth=2 softtabstop=2 expandtab
 " }}}
 " fold level based on filetype {{{
 autocmd FileType php setlocal foldlevel=1

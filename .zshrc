@@ -8,6 +8,7 @@
 
 # If you come from bash you might have to change your $PATH.  
 export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/PhpStorm-201.6668.153/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="/home/fred-badlieutenant/.oh-my-zsh"
@@ -64,8 +65,7 @@ function tmw {
 }
 
 # Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
+# Setting this variable when ZSH_THEME=random will cause zsh to l a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
 # If set to an empty array, this variable will have no effect.
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
@@ -118,6 +118,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 plugins=(
   colorize
   common-aliases
+  docker-compose
   extract
   fasd
   git
@@ -156,8 +157,11 @@ export LANG=fr_FR.UTF-8
 # Enable a better reverse search experience.
 #  Requires: https://github.com/junegunn/fzf (to use fzf in general)
 #  Requires: https://github.com/BurntSushi/ripgrep (for using rg below)
+export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
+
 export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --no-ignore --glob '!.git'"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 
 # export TERM=xterm-256color
 # Bat can be used as a colorizings pager for man, by setting the MANPAGER environment variable:
@@ -169,6 +173,10 @@ function t() {
         fzf --query="$1 " --select-1 --exit-0 --height=25% --reverse --tac --no-sort --cycle) &&
     cd "$fasdlist"
 }
+
+# https://github.com/gabrielelana/awesome-terminal-fonts
+source ~/.fonts/*.sh
+
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
