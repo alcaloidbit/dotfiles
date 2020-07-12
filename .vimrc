@@ -1,6 +1,7 @@
 " Settings {{{
 let mapleader=","   " Leader is comma
 set path=$PWD/**    " Add current directory + sub-directories recursively to path
+set viminfo='100,n$HOME/.vim/files/info/viminfo'
 " Plugs mappings {{{
 " Instant-markdown {{{
 nnoremap <leader>md :InstantMarkdownPreview<CR>
@@ -248,6 +249,7 @@ runtime macros/matchit.vim
 " UltiSnips {{{
 let g:UltiSnipsListSnippets = "<F3>"
 let g:UltiSnipsSnippetDirectories = ["~/.vim/UltiSnips/", "UltiSnips/"]
+" let g:UltiSnipsExpandTrigger = "<F6>"
 " }}}
 " Vimwiki markdown support {{{
 let g:vimwiki_ext2syntax = {  '.md': 'markdown', 
@@ -319,10 +321,12 @@ set completeopt=noinsert,menuone,noselect
 " }}}
 " PHPactor {{{
 " Include use statement
-" nnoremap <Leader>u :call phpactor#UseAdd()<CR>
+nnoremap <Leader>u :call phpactor#UseAdd()<CR>
 
 " Invoke the context menu
-" nnoremap <Leader>mm :call phpactor#ContextMenu()<CR>
+nnoremap <Leader>mm :call phpactor#ContextMenu()<CR>
+nnoremap <leader>mi :PhpactorImportClass<CR>
+nnoremap <leader>go :PhpactorGotoDefinition<CR>
 
 " Goto definition of class or class member under the cursor
 " nnoremap <Leader>o :call phpactor#GotoDefinition()<CR>
@@ -445,8 +449,6 @@ set wildmenu    " Hitting TAB in command mode will show possible completions abo
 set winminheight=0  "Allow splits to be reduced to a single line
 " }}} 
 " Configuration {{{
-" Add namespace for the currently edited Class file PHP {{{
-map <F6> :r!~/Script/namespace %<CR>
 " }}}
 " Search using 'normal' regex {{{
 nnoremap / /\v
