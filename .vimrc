@@ -71,6 +71,7 @@ Plug 'SirVer/ultiSnips'
 Plug 'albanm/vuetify-vim'
 Plug 'dense-analysis/ale'
 Plug 'StanAngeloff/php.vim'
+Plug 'lumiliet/vim-twig'
 Plug 'phpstan/vim-phpstan'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'bfredl/nvim-miniyank'
@@ -92,6 +93,7 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
 " Modify * to also work with visual selection
 Plug 'nelstrom/vim-visual-star-search'
+Plug 'moll/vim-node'
 Plug 'mattn/emmet-vim'
 Plug 'mileszs/ack.vim'
 Plug 'moll/vim-bbye'
@@ -359,9 +361,9 @@ let g:ale_linters = {
 let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
 
 let g:ale_fixers = {
-    \ 'javascript': ['eslint'],
-    \ 'vue': ['eslint']
-    \ }
+            \ 'javascript': ['eslint'],
+            \ 'vue': ['eslint']
+            \ }
 let g:ale_fix_on_save = 1
 
 "Show 5 lines of errors (default: 10)
@@ -371,7 +373,7 @@ let g:ale_sign_error = ''
 let g:ale_sign_warning = '' 
 " }}}
 " vim-closetag {{{
-  let g:closetag_filenames = '*.html,*.xhtml,*.xml,*.vue,*.php,*.phtml,*.js,*.jsx,*.coffee,*.erb'
+let g:closetag_filenames = '*.html,*.xhtml,*.xml,*.vue,*.php,*.phtml,*.js,*.jsx,*.coffee,*.erb'
 " }}}
 " }}}
 " }}}
@@ -520,6 +522,7 @@ noremap <leader>gg gg23<C-e>
 noremap <leader>v :vsplit<CR>
 noremap <leader>s :split<CR>
 noremap <leader>cl :close<CR>
+noremap <leader>cd :cd 
 " Open a new blank buffer in a vertical split
 nnoremap <leader>vn :vnew<cr>
 " Open a new blank buffer in a horizontal split
@@ -576,7 +579,7 @@ nnoremap <F4> :set foldlevel=1<CR>
 nnoremap <F5> zR
 " }}}
 " Indent file {{{
-noremap <F7> gg=G<C-o><C-o>
+noremap <F7> gg=G
 " }}}
 " Netrw {{{
 let g:netrw_liststyle = 3
