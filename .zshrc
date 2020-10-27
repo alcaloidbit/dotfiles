@@ -18,6 +18,9 @@ export ZSH="/home/fred-badlieutenant/.oh-my-zsh"
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="spaceship"
 
+export RANGER_LOAD_DEFAULT_RC=false
+
+
 # CUSTOMIZE SPACESHIP
 SPACESHIP_NODE_DEFAULT_VERSION="v11.14.0"
 SPACESHIP_PROMPT_ORDER=(
@@ -49,7 +52,7 @@ SPACESHIP_PROMPT_ORDER=(
 # terraform     # Terraform workspace section
   exec_time     # Execution time
   line_sep      # Line break
-  battery       # Battery level and status
+# battery       # Battery level and status
 # vi_mode       # Vi-mode indicator
   jobs          # Background jobs indicator
   exit_code     # Exit code section
@@ -121,18 +124,23 @@ plugins=(
   docker-compose
   extract
   fasd
+  forgit
   git
   gitignore
   git-prompt
   symfony
   symfony2
+  tmux
   z
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
 
+# ZSH_TMUX_AUTOSTART='true'
+
 source $ZSH/oh-my-zsh.sh
 source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH/custom/plugins/forgit/forgit.plugin.zsh
 
 
 # User configuration
@@ -142,11 +150,11 @@ source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 export LANG=fr_FR.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='vim'
+fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -154,10 +162,25 @@ export LANG=fr_FR.UTF-8
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
 
-# Enable a better reverse search experience.
 #  Requires: https://github.com/junegunn/fzf (to use fzf in general)
 #  Requires: https://github.com/BurntSushi/ripgrep (for using rg below)
-export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
+
+# export FZF_COMPLETION_TRIGGER='**' 
+export FZF_DEFAULT_OPTS="
+--ansi 
+--layout=reverse
+--height=80%
+--multi
+--preview-window=:hidden 
+--preview '([[ -f {} ]] && (bat --style=numbers --color=always {} || cat {})) || ([[ -d {} ]] && (ls {} )) || echo {} 2> /dev/null | head -200'
+--color='hl:148,hl+:154,pointer:032,marker:010,bg+:237,gutter:008'
+--prompt='~ ' 
+--bind '?:toggle-preview'
+--bind 'ctrl-a:select-all'
+--bind 'ctrl-y:execute-silent(echo {+} | pbcopy)'
+--bind 'ctrl-e:execute(echo {+} | xargs -o vim)'
+--bind 'ctrl-v:execute(code {+})'
+"
 
 export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --no-ignore --glob '!.git'"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -166,6 +189,7 @@ export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --no-ignore --glob '!.g
 # export TERM=xterm-256color
 # Bat can be used as a colorizings pager for man, by setting the MANPAGER environment variable:
 export MANPAGER="sh -c 'col -bx | bat -l man -p'" 
+
 
 # FASD + FZF
 function t() {

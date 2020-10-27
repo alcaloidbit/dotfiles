@@ -1,0 +1,33 @@
+ncmpcpp_directory =     "~/.ncmpcpp"
+# mpd_host =              "127.0.0.1"
+mpd_host =              "/run/mpd/socket"
+mpd_port =              "6600"
+mpd_music_dir =         "/home/fred-badlieutenant/Music/"
+
+playlist_display_mode = columns
+browser_display_mode  = columns
+search_engine_display_mode = columns
+user_interface        = alternative
+
+visualizer_fifo_path = "/tmp/mpd.fifo"
+visualizer_output_name = "visualizer"
+visualizer_sync_interval = "20"
+visualizer_type = "wave"
+# visualizer_type = "spectrum"
+visualizer_color ="yellow"
+visualizer_look = "º|"
+
+ 
+####songs####
+#([cyan,date],[cyan, length], [cyan,title] | [cyan,date],[blue,title],[cyan])
+song_list_format = "{$7%a $7%l $7%t}|{$7%a $5%t $7}"
+#([red,artist],[magenta],[red,length])
+song_status_format = "$2%a $7• $4%t $7• $3%b {}$7• $5%y$7"
+#([cyan,length],[blue,title],[end current color])
+song_library_format = "$7%l $5%t$9"
+#([magenta,blue,magenta]|[blue]
+now_playing_prefix = "$b$8»$2»$4»$3» "
+now_playing_suffix = "$/b"
+#([blue],[cyan,artist],[blue,title],[yellow,album],[magenta,length] 
+song_columns_list_format = "(4)[]{} (15)[cyan]{a} (30)[blue]{t} (46)[white]{b} (5)[magenta]{l}"
+

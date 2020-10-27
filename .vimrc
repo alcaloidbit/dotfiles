@@ -1,7 +1,10 @@
 " Settings {{{
+" Misc {{{
 let mapleader=","   " Leader is comma
 set path=$PWD/**    " Add current directory + sub-directories recursively to path
 set viminfo='100,n$HOME/.vim/files/info/viminfo'
+set redrawtime=10000
+" }}}
 " Plugs mappings {{{
 " Instant-markdown {{{
 nnoremap <leader>md :InstantMarkdownPreview<CR>
@@ -75,7 +78,9 @@ Plug 'lumiliet/vim-twig'
 Plug 'phpstan/vim-phpstan'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'bfredl/nvim-miniyank'
+Plug 'francoiscabrol/ranger.vim'
 Plug 'ervandew/supertab'
+Plug 'mboughaba/i3config.vim'
 Plug 'epilande/vim-es2015-snippets'
 Plug 'alvan/vim-closetag'
 Plug 'godlygeek/tabular'
@@ -87,6 +92,7 @@ Plug 'tobyS/vmustache'
 Plug 'tobyS/pdv'
 Plug 'joshdick/onedark.vim'
 Plug 'luochen1990/rainbow'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'kshenoy/vim-signature'
 Plug 'ludovicchabant/vim-gutentags'
@@ -118,7 +124,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'scrooloose/nerdtree'
 Plug 'sheerun/vim-polyglot'
 Plug 'stephpy/vim-php-cs-fixer'
-Plug 'suan/vim-instant-markdown', {'rtp': 'after'}
+Plug 'suan/vim-instant-markdown', {'for': 'markdown'}
 Plug 'townk/vim-autoclose'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
@@ -221,7 +227,6 @@ endfunction
 
 function! SessionWidget()
     let s = '%=' " Right-align after this
-
     if exists('g:this_obsession')
         let s .= '%#diffadd#' " Use the "DiffAdd" color if in a session
     endif
@@ -284,7 +289,7 @@ set rtp+=~/.fzf
 " Allow passing optional flags into the Rg command.
 autocmd VimEnter * command! -nargs=* Rg
             \ call fzf#vim#grep(
-            \   'rg --column --line-number --no-hidden --no-heading --ignore-case --color "always" '.<q-args>, 1,
+            \   'rg --column --line-number --no-hidden --no-heading --smart-case --color=always '.shellescape(<q-args>), 1,
             \   <bang>0 ? fzf#vim#with_preview('up:60%')
             \           : fzf#vim#with_preview('right:50%:hidden', '?'),
             \   <bang>0)
@@ -292,6 +297,22 @@ autocmd VimEnter * command! -nargs=* Rg
 let g:fzf_files_options = '--preview "bat --color always --style=numbers --color=always {} | head -500"'
 
 "}}}
+" FASD change CWD {{{
+" Z - cd to recent / frequent directories
+command! -nargs=* Z :call Z(<f-args>)
+function! Z(...)
+    let cmd = 'fasd -d -e printf'
+    for arg in a:000
+        let cmd = cmd . '  ' . arg
+    endfor
+    let path = system(cmd)
+    if isdirectory(path)
+        echo path
+        exec 'cd' fnameescape(path)
+    endif
+endfunction
+nnoremap <leader>e :Z<Space>
+" }}}
 " Bbye {{{
 set runtimepath^=~/.vim/bundle/bbye
 " }}}
@@ -375,29 +396,63 @@ let g:ale_sign_warning = ''
 " vim-closetag {{{
 let g:closetag_filenames = '*.html,*.xhtml,*.xml,*.vue,*.php,*.phtml,*.js,*.jsx,*.coffee,*.erb'
 " }}}
+" Ack.vim {{{
+" Use ripgrep for searching
+" Options include:
+" --vimgrep -> Needed to parse the rg response properly for ack.vim
+" --type-not sql -> Avoid huge sql file dumps as it slows down the search
+"  --smart case -> Search case insensitive if all lowecase pattern, search
+"  case sensitively otherwise
+let g:ackprg = 'rg --vimgrep --type-not sql --smart-case'
+" Auto close the Quickfix list after pressing '<enter>' on a list item
+let g:ack_autoclose = 1
+" Any empty ack search will search for the word the cursor is on
+let g:ack_use_cword_for_empty_search = 1
+" Don't jump to first match
+cnoreabbrev Ack Ack
+" Maps <leader>/ so we're ready to type the search keyword
+nnoremap <Leader>/ :Ack!<Space>
+" Navigate Quickfix list with ease
+nnoremap <silent> [q :cprevious<CR>
+nnoremap <silent> ]q :cnext<CR>
+" }}}
 " }}}
 " }}}
 " Colors {{{
-if (empty($TMUX))
-    if (has("nvim"))
-        "For Neovim 0.1.3 and 0.1.4 < "https://github.com/neovim/neovim/pull/2198 >
-        let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-    endif
-    if exists('+termguicolors')
-        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-        let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-        set termguicolors
-    endif
+highlight Normal ctermbg=NONE
+highlight nonText ctermbg=NONE
+" github.com/joshdickonedark.vim
+" Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+if (has("nvim"))
+    "For Neovim 0.1.3 and 0.1.4 < "https://github.com/neovim/neovim/pull/2198 >
+    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 endif
+
+" Enable true color 
+if exists('+termguicolors')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    set termguicolors
+endif
+
+set background=dark
+
 syntax on
-" colorscheme gruvbox
 colorscheme onedark
+" OneDark theme options {{{'
+let g:onedark_termcolors = 256
+let g:onedark_hide_endofbuffer = 1
+let g:onedark_terminal_italics = 1
 " }}}
+highlight SignatureMarkText guifg=#E06C75 ctermfg=204
+" }}}
+" Options {{{
 " Local directories {{{
 set backupdir^=~/.vim-tmp,~/.tmp,/var/tmp,/tmp
 set directory^=~/.vim-tmp,~/.tmp,/var/tmp,/tmp
 " }}}
-" Options {{{
 set autoindent  " Copy indent from last line when starting new line
 set backspace=indent,eol,start
 " set cursorline	        " highlight current line
@@ -451,7 +506,6 @@ set wildmenu    " Hitting TAB in command mode will show possible completions abo
 set winminheight=0  "Allow splits to be reduced to a single line
 " }}} 
 " Configuration {{{
-" }}}
 " Search using 'normal' regex {{{
 nnoremap / /\v
 vnoremap / /\v
@@ -591,18 +645,21 @@ let g:netrw_winsize = 15
 " Indentation based on filetype {{{
 autocmd FileType css setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType scss setlocal shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType tpl setlocal shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType tpl setlocal shiftwidth=4 softtabstop=4 expandtab
 autocmd FileType json setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType js  setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType javascript  setlocal shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType vue  setlocal shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType smarty  setlocal shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType vue setlocal shiftwidth=4 softtabstop=4 expandtab
+augroup SmartyHTML
+    autocmd!
+    autocmd Filetype smarty set filetype=smarty.html
+augroup END
+autocmd FileType smarty.html  setlocal shiftwidth=2 softtabstop=2 expandtab
 autocmd FileType html.twig  setlocal shiftwidth=2 softtabstop=2 expandtab
 " }}}
 " fold level based on filetype {{{
 autocmd FileType php setlocal foldlevel=1
 " }}}
-
 " Highlight last inserted text {{{
 nnoremap <leader>gh `[v`]
 " }}}
@@ -625,8 +682,6 @@ nnoremap <Leader>sp :Obsession!<CR>
 " Save all open files, write this:session 
 " If no session file yet, save Session.vim in current working dir.
 " nnoremap <F2> :wa<Bar>exe "mksession! " . v:this_session . ""
-" }}}
-"}}} 
 " Buffers {{{
 augroup buffer_control
     autocmd!
@@ -645,21 +700,5 @@ augroup buffer_control
     " nnoremap <leader>b :ls<CR>:b<Space>
     " }}}
 augroup END
-" }}}
-" FASD change CWD {{{
-" Z - cd to recent / frequent directories
-command! -nargs=* Z :call Z(<f-args>)
-function! Z(...)
-    let cmd = 'fasd -d -e printf'
-    for arg in a:000
-        let cmd = cmd . '  ' . arg
-    endfor
-    let path = system(cmd)
-    if isdirectory(path)
-        echo path
-        exec 'cd' fnameescape(path)
-    endif
-endfunction
-nnoremap <leader>e :Z<Space>
 " }}}
 " vim: foldmethod=marker:foldlevel=0:

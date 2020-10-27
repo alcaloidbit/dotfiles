@@ -1,0 +1,587 @@
+[bar/i3wmthemer_bar2]
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+monitor = ${env:MONITOR:DVI-I-0}
+width = 100%
+height = 27
+radius = 0
+fixed-center = true
+
+background = #282c34
+foreground = #abb2bf
+
+line-size = 3
+line-color =
+
+border-size = 0
+border-color =
+
+padding-left = 0
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = "Hack Nerd Font Regular:size=10;1"
+;font-0 = "Source Code Pro Semibold:size=10;1"
+font-1 = "Font Awesome 5 Free:style=Solid:size=10;1"
+font-2 = "Font Awesome 5 Brands:size=10;1"
+
+modules-left = i3 
+modules-right = mpd
+;modules-center =  mpd
+
+tray-position =
+;tray-padding =
+override-redirect = false
+wm-restack = i3
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/i3wmthemer_bar]
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+monitor = ${env:MONITOR:DVI-I-1}
+width = 100%
+height = 27
+radius = 0
+fixed-center = true
+
+background = #282c34
+foreground = #abb2bf
+
+line-size = 3
+line-color =
+
+border-size = 0
+border-color =
+
+padding-left = 0
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = "Hack Nerd Font Regular:size=10;1"
+;font-0 = "Source Code Pro Semibold:size=10;1"
+font-1 = "Font Awesome 5 Free:style=Solid:size=10;1"
+font-2 = "Font Awesome 5 Brands:size=10;1"
+
+modules-left = i3
+modules-center = date
+modules-right = cpu powermenu
+
+tray-position =
+;tray-padding =
+override-redirect = false
+wm-restack = i3
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+
+[module/mpd]
+type = internal/mpd
+; Host where mpd is runnig (either ip or domain name)
+; Can also be the full path to a unix socket where mpd is running
+host = 127.0.0.1
+port = 6600
+interval = 2
+; Available tags:
+;   <label-song> (default)
+;   <label-time>
+;   <bar-progress>
+;   <toggle> - gets replaced with <icon-(pause|play)>
+;   <toggle-stop> - gets replaced with <icon-(stop|play)>
+;   <icon-random>
+;   <icon-repeat>
+;   <icon-repeatone> (deprecated)
+;   <icon-single> - Toggle playing only a single song. Replaces <icon-repeatone>
+;   <icon-consume>
+;   <icon-prev>
+;   <icon-stop>
+;   <icon-play>
+;   <icon-pause>
+;   <icon-next>
+;   <icon-seekb>
+;   <icon-seekf>
+format-online = <icon-stop> <toggle>  <icon-prev> <icon-next>  <icon-repeat> <icon-random>   <label-time>  <label-song>
+format-playing = ${self.format-online}
+format-paused = ${self.format-online}
+format-stopped = ${self.format-online}
+
+; Available tags:
+;   <label-offline>
+; Default: ""
+format-offline = <label-offline>
+
+; Available tokens:
+;   %artist%
+;   %album-artist%
+;   %album%
+;   %date%
+;   %title%
+; Default: %artist% - %title%
+label-song =  %artist% - %album% - %title%
+
+; Available tokens:
+;   %elapsed%
+;   %total%
+; Default: %elapsed% / %total%
+;label-time = %elapsed% / %total%
+
+; Available tokens:
+;   None
+label-offline =  mpd is offline
+
+; Only applies if <icon-X> is used
+icon-play =  
+icon-pause = 
+icon-stop = 
+icon-prev =  
+icon-next = 
+; icon-seekb = 
+; icon-seekf = 
+icon-random =  
+icon-repeat = 
+; icon-repeatone = 
+; icon-single = 
+; icon-consume = 
+
+; Used to display the state of random/repeat/repeatone/single
+; Only applies if <icon-[random|repeat|repeatone|single]> is used
+toggle-on-foreground = #ff
+toggle-off-foreground = #4b5263
+
+; Only applies if <bar-progress> is used
+bar-progress-width = 25
+bar-progress-indicator = |
+bar-progress-fill = ─
+bar-progress-empty = ─
+
+[module/filesystem]
+type = internal/fs
+
+; Mountpoints to display
+mount-0 = /
+mount-1 = /home
+
+; Seconds to sleep between updates
+; Default: 30
+interval = 10
+
+; Display fixed precision values
+; Default: false
+fixed-values = true
+
+; Spacing between entries
+; Default: 2
+spacing = 4
+; Available tags:
+;   <label-mounted> (default)
+;   <bar-free>
+;   <bar-used>
+;   <ramp-capacity>
+format-mounted = <label-mounted>
+
+; Available tags:
+;   <label-unmounted> (default)
+format-unmounted = <label-unmounted>
+
+; Available tokens:
+;   %mountpoint%
+;   %type%
+;   %fsname%
+;   %percentage_free%
+;   %percentage_used%
+;   %total%
+;   %free%
+;   %used%
+; Default: %mountpoint% %percentage_free%%
+label-mounted = %mountpoint%: %percentage_free%% of %total%
+
+; Available tokens:
+;   %mountpoint%
+; Default: %mountpoint% is not mounted
+label-unmounted = %mountpoint%: not mounted
+label-unmounted-foreground = #55
+
+[module/xkeyboard]
+type = internal/xkeyboard
+
+; List of indicators to ignore
+blacklist-0 = num lock
+blacklist-1 = scroll lock
+
+[module/battery]
+type = internal/battery
+
+; This is useful in case the battery never reports 100% charge
+full-at = 99
+
+; Use the following command to list batteries and adapters:
+; $ ls -1 /sys/class/power_supply/
+battery = BAT0
+adapter = ADP1
+
+; If an inotify event haven't been reported in this many
+; seconds, manually poll for new values.
+;
+; Needed as a fallback for systems that don't report events
+; on sysfs/procfs.
+;
+; Disable polling by setting the interval to 0.
+;
+; Default: 5
+poll-interval = 5
+
+; see "man date" for details on how to format the time string
+; NOTE: if you want to use syntax tags here you need to use %%{...}
+; Default: %H:%M:%S
+time-format = %H:%M
+
+; Available tags:
+;   <label-charging> (default)
+;   <bar-capacity>
+;   <ramp-capacity>
+;   <animation-charging>
+format-charging = <animation-charging> <label-charging>
+
+; Available tags:
+;   <label-discharging> (default)
+;   <bar-capacity>
+;   <ramp-capacity>
+;   <animation-discharging>
+format-discharging = <ramp-capacity> <label-discharging>
+
+; Available tags:
+;   <label-full> (default)
+;   <bar-capacity>
+;   <ramp-capacity>
+;format-full = <ramp-capacity> <label-full>
+
+; Available tokens:
+;   %percentage% (default) - is set to 100 if full-at is reached
+;   %percentage_raw%
+;   %time%
+;   %consumption% (shows current charge rate in watts)
+label-charging =  %percentage%% (C)
+
+; Available tokens:
+;   %percentage% (default) - is set to 100 if full-at is reached
+;   %percentage_raw%
+;   %time%
+;   %consumption% (shows current discharge rate in watts)
+label-discharging = %percentage%% (D)
+
+; Available tokens:
+;   %percentage% (default) - is set to 100 if full-at is reached
+;   %percentage_raw%
+label-full = Fully charged
+
+; Only applies if <ramp-capacity> is used
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+
+; Only applies if <bar-capacity> is used
+bar-capacity-width = 10
+
+; Only applies if <animation-charging> is used
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-4 = 
+; Framerate in milliseconds
+animation-charging-framerate = 750
+
+; Only applies if <animation-discharging> is used
+animation-discharging-0 = 
+animation-discharging-1 = 
+animation-discharging-2 = 
+animation-discharging-3 = 
+animation-discharging-4 = 
+
+; Framerate in milliseconds
+animation-discharging-framerate = 500
+
+
+[module/cpu]
+type = internal/cpu
+interval = 0.5
+
+format = <label> <ramp-coreload>
+
+label = CPU 
+label-foreground = #abb2bf
+
+ramp-coreload-0 = ▁
+ramp-coreload-1 = ▂
+ramp-coreload-2 = ▃
+ramp-coreload-3 = ▄
+ramp-coreload-4 = ▅
+ramp-coreload-5 = ▆
+ramp-coreload-6 = ▇
+ramp-coreload-7 = █
+
+[module/i3]
+type = internal/i3
+
+; Only show workspaces defined on the same output as the bar
+;
+; Useful if you want to show monitor specific workspaces
+; on different bars
+;
+; Default: false
+pin-workspaces = true
+
+; This will split the workspace name on ':'
+; Default: false
+strip-wsnumbers = true
+
+; Sort the workspaces by index instead of the default
+; sorting that groups the workspaces by output
+; Default: false
+index-sort = true
+
+; Create click handler used to focus workspace
+; Default: true
+enable-click = true
+
+; Create scroll handlers used to cycle workspaces
+; Default: true
+enable-scroll = true
+
+; Wrap around when reaching the first/last workspace
+; Default: true
+wrapping-scroll = false
+
+; Set the scroll cycle direction 
+; Default: true
+reverse-scroll = false
+
+; Use fuzzy (partial) matching on labels when assigning 
+; icons to workspaces
+; Example: code;♚ will apply the icon to all workspaces 
+; containing 'code' in the label
+; Default: false
+fuzzy-match = true
+
+format = <label-state> <label-mode>
+
+ws-icon-0 = 1;
+ws-icon-1 = 2;
+ws-icon-2 = 3;
+ws-icon-3 = 4;
+ws-icon-4 = 5;
+ws-icon-default = 
+
+label-dimmed-underline = ${root.background}
+
+label-focused = %icon% 
+label-focused-foreground = #abb2bf
+label-focused-background = #4b5263
+;label-focused-underline = #${colors.accent}
+label-focused-underline = #abb2bf
+label-focused-font = 4
+label-focused-padding = 4
+
+label-unfocused = %icon%  
+label-unfocused-underline = #5c6370
+label-unfocused-font = 4
+label-unfocused-padding = 4
+
+label-urgent = %icon%  %name%
+label-urgent-foreground = #000000
+label-urgent-background = #bd2c40
+label-urgent-underline = #9b0a20
+label-urgent-font = 4
+label-urgent-padding = 4
+
+label-visible = %icon%  
+label-visible-foreground = #55ffffff
+label-visible-font = 4
+label-visible-padding = 4
+
+#
+#type = internal/i3
+#format = <label-state> <label-mode>
+#index-sort = true
+#wrapping-scroll = false
+#
+#label-mode-padding = 2
+#label-mode-foreground = #282c34
+#label-mode-background = #cbd1cd
+#
+#label-focused = %index%
+#label-focused-background = #919893
+#label-focused-foreground = #6b7443
+#label-focused-padding = 2
+#
+#label-unfocused = %index%
+#label-unfocused-background = #cbd1cd
+#label-unfocused-foreground = #282c34
+#label-unfocused-padding = 2
+#
+#label-visible = %index%
+#label-visible-background = #cbd1cd
+#label-visible-foreground = #282c34
+#label-visible-padding = 2
+#
+#label-urgent = %index%
+#label-urgent-background = #BA2922
+##label-urgent-padding = 2
+
+[module/wlan]
+type = internal/network
+interface = net1
+interval = 3.0
+
+format-connected = <ramp-signal> <label-connected>
+format-connected-foreground = #cbd1cd
+format-connected-background = #282c34
+format-connected-padding = 2
+label-connected = %essid%
+
+format-disconnected =
+
+ramp-signal-0 = 
+ramp-signal-1 = 
+ramp-signal-2 = 
+ramp-signal-3 = 
+ramp-signal-4 = 
+ramp-signal-foreground = #282c34
+
+[module/eth]
+type = internal/network
+interface = enp0s25
+interval = 1.5
+
+format-connected-padding = 2
+format-connected-foreground = #cbd1cd
+format-connected-background = #282c34
+format-connected-prefix = " "
+format-connected-prefix-foreground = #cbd1cd
+label-connected = " "
+
+format-disconnected =
+
+[module/date]
+type = internal/date
+interval = 5
+
+date =
+date-alt = " %Y-%m-%d"
+
+time = %H:%M
+time-alt = %H:%M:%S
+
+format-prefix = 
+format-foreground = #282c34
+format-background = #abb2bf
+format-padding = 2
+
+label = %date% %time%
+
+[module/powermenu]
+type = custom/menu
+
+expand-right = true
+
+format-spacing = 1
+
+label-open = 
+label-open-foreground = #abb2bf
+label-close =  cancel
+label-close-foreground = #abb2bf
+label-separator = |
+label-separator-foreground = #abb2bf
+
+menu-0-0 = reboot
+menu-0-0-exec = menu-open-1
+menu-0-1 = power off
+menu-0-1-exec = menu-open-2
+menu-0-2 = log off
+menu-0-2-exec = menu-open-3
+
+menu-1-0 = cancel
+menu-1-0-exec = menu-open-0
+menu-1-1 = reboot
+menu-1-1-exec = reboot
+
+menu-2-0 = power off
+menu-2-0-exec = poweroff
+menu-2-1 = cancel
+menu-2-1-exec = menu-open-0
+
+menu-3-0 = log off
+menu-3-0-exec = i3 exit logout
+menu-3-1 = cancel
+menu-3-1-exec = menu-open-0
+
+[module/pulseaudio]
+type = internal/pulseaudio
+
+sink = alsa_output.pci-0000_00_1b.0.analog-stereo
+
+use-ui-max = false
+
+interval = 5
+format-volume = <ramp-volume> <label-volume>
+
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
+
+click-right = pavucontrol &
+
+[module/backlight]
+type = internal/xbacklight
+
+output = DVI-I-0
+
+format = <label>
+label = %percentage% 
+
+ramp-0 = 
+ramp-0-foreground = #666
+ramp-1 = 
+ramp-1-foreground = #999
+ramp-2 = 
+ramp-2-foreground = #fff
+
+
+[module/title]
+type=internal/xwindow
+; Available tags:
+;   <label> (default)
+format = <label>
+format-background = #abb2bf
+format-foreground = #fff
+format-padding = 4
+
+; Available tokens:
+;   %title%
+; Default: %title%
+label = %title%
+label-maxlen = 50
+
+; Used instead of label when there is no window title
+; Available tokens:
+;   None
+label-empty = Empty
+label-empty-foreground = #fff
+
+[settings]
+screenchange-reload = true
+
+[global/wm]
+margin-top = 0
+margin-bottom = 0
+
+
+; vim:ft=dosini
